@@ -5,7 +5,7 @@
 #include <wolfssl/wolfcrypt/sha3.h>
 #include <math.h>
 using namespace std;
-
+#define HASH_SIZE SHA3_384_DIGEST_SIZE
 #define PRIME 3
 #define WIN_SIZE 16
 #define MODULUS 256
@@ -147,7 +147,7 @@ CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
     CHUNK_idx_t idx= umap[hash_value];
     // index ranges from 0 to MAX, but we do not store 0, 
     // so make all idx ++ before stroe it
-    if(idx!=0)  // got value
+    if(idx!=0)  // get value
         return idx-1;
 
     umap[hash_value] =chunk_index+1;
