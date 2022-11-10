@@ -243,12 +243,12 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
     cdc(input_buf,inlength,q_chunk); 
     std::string s_packet(reinterpret_cast<char*>(input_buf));  // convert input(unsigned char) to string saving in  $s_packet$
-    CHUNK_pos_t chunk_start_pos= 0;
+    CHUNK_pos_t chunk_start_pos= -1;
     CHUNK_pos_t chunk_end_pos=0;
     while(q_chunk.size()>0){    // pop out each chunk and manipulate each chunk in order 
-            if(chunk_start_pos!=0){
+            // if(chunk_start_pos!=0){
                 chunk_start_pos=chunk_end_pos+1;
-            }
+            // }
             cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
             uint32_t header=0;  // LZW header
             array<CHUNK_idx_t,2> index =q_chunk.front();
