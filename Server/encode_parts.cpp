@@ -272,7 +272,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
-                u.header = (uint32_t)outlen;
+                u.header = (uint32_t)outlen<<1;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 cout << u.header <<"\t"<< endl;
@@ -284,8 +284,10 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
-                u.header=0x80000000|sent;
-                cout << u.header <<"\t"<< endl;
+                u.header = sent<<1;
+                u.header|=1;
+                // u.header=0x80000000|sent;
+                cout <<"chunk id"<< u.header <<"\t"<< endl;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 //send(sent);
