@@ -24,7 +24,7 @@ uint64_t hash_func(unsigned char* input, unsigned int pos)
 
 uint64_t hash_func2(unsigned char* input, unsigned int pos, uint64_t hash_res)
 {
-	return hash_res * PRIME - int(input[pos-1]) * pow(PRIME, WIN_SIZE + 1) + int(input[pos-1 + WIN_SIZE]) * PRIME;;
+	return hash_res * PRIME - int(input[pos-1]) * pow(PRIME, WIN_SIZE + 1) + int(input[pos-1 + WIN_SIZE]) * PRIME;
 }
 
 void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
@@ -249,6 +249,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             if(chunk_start_pos!=0){
                 chunk_start_pos=chunk_end_pos+1;
             }
+            cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
             uint32_t header=0;  // LZW header
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
@@ -260,15 +261,17 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             // typedef std::array<unsigned char,HASH_SIZE> HASH
             HASH hash_value;
             SHA_384_HW(chunk_start_pos,chunk_end_pos,(char*)input_buf,inlength,hash_value);
-            cout<<"HASH value="<<hash_value<<endl;
-
+            // cout<<"HASH value="<<hash_value<<endl;
+            for(int i=0;i<HASH_SIZE;i++)
+                printf("%x",hash_value[i]);
+            printf("\n") ;   
             // return value of deduplication is unique chunk index if find index, else -1
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
             if(sent ==-1 ){
                 
                 // vector<unsigned char> output_code;
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
-                cout<<"generate LZW, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
+                cout<<"#generate LZW"<<endl;//, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
             
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
@@ -292,7 +295,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 u.header = sent<<1;
                 u.header|=1;
                 // u.header=0x80000000|sent;
-                cout <<"repeat chunk, chunk id="<< (u.header>>1) <<"\t"<< endl;
+                cout <<"\t#repeat chunk, chunk id="<< (u.header>>1) <<"\t"<< endl;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 //send(sent);
