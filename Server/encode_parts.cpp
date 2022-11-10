@@ -31,7 +31,7 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 {
     CHUNK_idx_t chunk_index=0; 
 	uint64_t hash = 0;
-	for (int i = WIN_SIZE; i < buff_size - WIN_SIZE; i++) {
+	for (unsigned int i = WIN_SIZE; i < buff_size - WIN_SIZE; i++) {
 		if (i == WIN_SIZE) {
 			hash = hash_func(buff, i);
 		}
@@ -250,7 +250,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 chunk_start_pos=chunk_end_pos+1;
             // }
             cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
-            uint32_t header=0;  // LZW header
+            // uint32_t header=0;  // LZW header
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
             chunk_end_pos= index[1];
