@@ -153,40 +153,7 @@ CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
     umap[hash_value] =chunk_index+1;
     return -1;  
 }
-/*
-void LZW(int chunk_start,int chunk_end,string &s1,unsigned int packet_size,vector<unsigned char> &output_code){
 
-    unordered_map<string, int> table;
-    // build the original table 
-    for (int i = 0; i <= 255; i++) {
-        string ch = "";
-        ch += char(i);
-        table[ch] = i;
-    }
-    string p = "", c = "";
-    p += s1[0];
-    int code = 256;
-    int length = chunk_end-chunk_start+1;
-    for (int i = 0; i <length; i++) {
-        if (i != s1.length() - 1)
-            c += s1[chunk_start+i + 1];
-        if (table.find(p + c) != table.end()) {
-            p = p + c;
-        }
-        else {
-            cout << p << "\t" << table[p] << "\t\t"
-                 << p + c << "\t" << code << endl;
-            output_code.push_back(table[p]);
-            table[p + c] = code;
-            code++;
-            p = c;
-        }
-        c = "";
-    }
-    // cout << p << "\t" << table[p] << endl;
-    output_code.push_back(table[p]);
-    return output_code;
-}*/
 void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*output_code,size_t * outlen){
 
     unordered_map<string, int> table;
@@ -208,8 +175,8 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
             p = p + c;
         }
         else {
-            cout << p << "\t" << table[p] << "\t\t"
-                 << p + c << "\t" << code << endl;
+            // cout << p << "\t" << table[p] << "\t\t"
+            //      << p + c << "\t" << code << endl;
             // output_code.push_back(table[p]);
             output_code[(*outlen)++] = table[p];
             table[p + c] = code;
@@ -308,6 +275,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 u.header = (uint32_t)outlen;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
+                cout << u.header <<"\t"<< endl;
                 memcpy(&output_buf[*outlength],output_code,outlen);
                 *outlength+=outlen;
             }
@@ -317,6 +285,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                     uint8_t arr[4];
                 }u;
                 u.header=0x80000000|sent;
+                cout << u.header <<"\t"<< endl;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 //send(sent);
