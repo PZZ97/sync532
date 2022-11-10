@@ -1,6 +1,6 @@
 #ifndef __SOURCE_H__
 #define __SOURCE_H__
-#define HASH_SIZE 256/8
+#define HASH_SIZE 384/8
 
 #include <array>
 #include <queue>
