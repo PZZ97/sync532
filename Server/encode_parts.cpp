@@ -39,7 +39,7 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 			hash = hash_func2(buff, i, hash);
 		}
 		if ((hash % MODULUS) == TARGET) {
-			chunk_q.push({chunk_index,i});
+			chunk_q.push({chunk_index++,i});
 		}
 	}
 
@@ -276,14 +276,16 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
     cdc(input_buf,inlength,q_chunk); 
     std::string s_packet(reinterpret_cast<char*>(input_buf));  // convert input(unsigned char) to string saving in  $s_packet$
-    int chunk_start_pos= 0;
-    int chunk_end_pos=0;
+    CHUNK_pos_t chunk_start_pos= 0;
+    CHUNK_pos_t chunk_end_pos=0;
     while(q_chunk.size()>0){    // pop out each chunk and manipulate each chunk in order 
             if(chunk_start_pos!=0){
                 chunk_start_pos=chunk_end_pos+1;
             }
-            array<int,2> index =q_chunk.front();
-            int chunk_unique_id = index[0];
+            uint32_t header=0;  // LZW header
+
+            array<CHUNK_idx_t,2> index =q_chunk.front();
+            CHUNK_idx_t chunk_unique_id = index[0];
             chunk_end_pos= index[1];
             q_chunk.pop();
             // typedef std::array<unsigned char,HASH_SIZE> HASH
@@ -293,17 +295,33 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             // return value of deduplication is unique chunk index if find index, else -1
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
             if(sent ==-1 ){
+                
                 // vector<unsigned char> output_code;
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
                 //send (output_code);
+                union {
+                    uint32_t header;
+                    uint8_t arr[4];
+                }u;
+                u.header = (uint32_t)outlen;
+                memcpy(&output_buf[*outlength],u.arr,4);
+                (*outlength)+=4;
                 memcpy(&output_buf[*outlength],output_code,outlen);
                 *outlength+=outlen;
             }
             else{
+                union {
+                    uint32_t header;
+                    uint8_t arr[4];
+                }u;
+                u.header=0x80000000|sent;
+                memcpy(&output_buf[*outlength],u.arr,4);
+                (*outlength)+=4;
                 //send(sent);
-                output_buf[(*outlength)++]=(unsigned char)sent;
+                // output_buf[(*outlength)++]=(unsigned char)sent;
+                // memcpy(&output_buf[*outlength],output_code,outlen);
             }
         }
     return 0;
