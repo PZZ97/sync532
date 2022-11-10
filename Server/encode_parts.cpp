@@ -143,7 +143,7 @@ void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, char* packet, unsigned int pa
     }
 }
 CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
-    unordered_map<HASH,CHUNK_idx_t> umap;
+    static unordered_map<HASH,CHUNK_idx_t> umap;
     CHUNK_idx_t idx= umap[hash_value];
     // index ranges from 0 to MAX, but we do not store 0, 
     // so make all idx ++ before stroe it
