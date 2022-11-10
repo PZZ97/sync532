@@ -284,7 +284,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
-                printf("")
+              
                 memcpy(&output_buf[*outlength],output_code,outlen);
                 *outlength+=outlen;
             }
