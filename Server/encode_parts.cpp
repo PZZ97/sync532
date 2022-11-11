@@ -140,7 +140,7 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 //     wc_Sha3_384_Final(&sha3_384, shaSum);
 //     printf("shaSum=%s\n",shaSum);
 
-//     for(int i=0;i<SHA3_384_DIGEST_SIZE;i+=2){
+//     for(int i=0;i<SHA3_384_DIGEST_SIZE;i+=1){
 // //        hash_value[i]=shaSum[i];
 //         hash_value+=shaSum[i];
 //     }
@@ -157,11 +157,12 @@ void SHA_384_HW_2(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsi
     wc_Sha3_384_Final(&sha3_384, shaSum);
     // printf("shaSum=%s\n",shaSum);
 
-    for(int i=0;i<SHA3_384_DIGEST_SIZE;i+=2){
+    for(int i=0;i<SHA3_384_DIGEST_SIZE;i+=1){
 //        hash_value[i]=shaSum[i];
-    printf("%x",shaSum[i]);
+        printf("%x",shaSum[i]);
         hash_value+=shaSum[i];
     }
+    cout<<endl;
 }
 CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
     static unordered_map<HASH,CHUNK_idx_t> umap;
@@ -272,19 +273,18 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
             // typedef std::array<unsigned char,HASH_SIZE> HASH
             HASH hash_value=0;
-            for(int i=0;i<HASH_SIZE;i++)
-                printf("%x",hash_value[i]);
-            printf("\n") ;  
+            // for(int i=0;i<HASH_SIZE;i++)
+            //     printf("%x",hash_value[i]);
+            // printf("\n") ;  
             unsigned char message[inlength];
             for(int i=chunk_start_pos;i<chunk_end_pos+1;i++)
                 message[i-chunk_start_pos]=input_buf[i];
 
             // SHA_384_HW(chunk_start_pos,chunk_end_pos,input_buf,inlength,hash_value);
             SHA_384_HW_2(chunk_start_pos,chunk_end_pos,message,inlength,hash_value);
-            
-            // cout<<"HASH value="<<hash_value<<endl;
-            for(int i=0;i<HASH_SIZE;i++)
-                printf("%x",hash_value[i]);
+
+            // for(int i=0;i<HASH_SIZE;i++)
+            //     printf("%x",hash_value[i]);
             printf("\n") ;   
             // return value of deduplication is unique chunk index if find index, else -1
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
@@ -297,7 +297,6 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
                 // vector<int> output_code=LZW_vec(chunk_start_pos,chunk_end_pos,s_packet,inlength);
-                // outlen--;
                 union {
                     uint32_t header;
                     uint8_t arr[4];
@@ -308,13 +307,14 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
               
                 memcpy(&output_buf[*outlength],output_code,outlen);
+                (*outlength)+=outlen;
                 // for(int i=0;i<output_code.size()*4;i+=4){
                 //     output_buf[*outlength+i]=   (output_code[i]&0xf000)>>12;
                 //     output_buf[*outlength+i+1]=(output_code[i]&0x0f00)>>8;
                 //     output_buf[*outlength+i+2]=(output_code[i]&0xf0f0)>>4;
                 //     output_buf[*outlength+i+3]=(output_code[i]&0x000f)>>12;
                 // }
-                *outlength+=output_code.size()*4;
+                // *outlength+=output_code.size()*4;
             }
             else{
                 union {
