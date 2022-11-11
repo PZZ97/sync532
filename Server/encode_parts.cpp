@@ -323,7 +323,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                printf("Output len%d",outlen)
+                printf("Output len%d",outlen);
                 //send (output_code);
                 outlen--;
                 union {
