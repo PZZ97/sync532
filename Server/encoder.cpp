@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 	// memcpy(&file[offset], &buffer[HEADER], length);
 	int output_length=0;	
 	encode(&file[offset],&buffer[HEADER],length,&output_length);
-	offset += length;
+	offset += output_length;
 	writer++;
 
 	//last message
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
 		//printf("length: %d offset %d\n",length,offset);
 		// memcpy(&file[offset], &buffer[HEADER], length);
 		encode(&file[offset],&buffer[HEADER],length,&output_length);
-		offset += length;
+		offset += output_length;
 		writer++;
 	}
 
