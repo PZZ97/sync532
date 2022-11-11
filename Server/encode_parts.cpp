@@ -6,7 +6,7 @@
 #include <wolfssl/wolfcrypt/sha.h>
 #include <math.h>
 using namespace std;
-#define HASH_SIZE SHA3_DIGEST_SIZE
+#define HASH_SIZE SHA_DIGEST_SIZE
 // #define HASH_SIZE SHA3_384_DIGEST_SIZE
 #define PRIME 3
 #define WIN_SIZE 16
@@ -148,12 +148,12 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 
 void SHA_HW(char* message, char*digest){
     // https://edstem.org/us/courses/27305/discussion/2053707
-    char shaSum[SHA3_384_DIGEST_SIZE];
+    char shaSum[HASH_SIZE];
     Sha sha;
-    wc_InitSha(&sha,NULL,INVALID_DEVID);
+    wc_InitSha(&sha);
     wc_ShaUpdate(&sha, (const unsigned char*)message, strlen(message)); 
     wc_ShaFinal(&sha, (unsigned char*)digest);
-    printf("shaSum=%s\n",shaSum);
+    printf("shaSum=%s\n",digest);
 //     for(int i=0;i<SHA3_384_DIGEST_SIZE;i++){
 // //        hash_value[i]=shaSum[i];
 //         hash_value+=shaSum[i];
@@ -308,7 +308,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             }
             char tmp[HASH_SIZE];
             strcpy(tmp,hash_value.c_str());
-            SHA_HW(chunk_start_pos,chunk_end_pos,input_buf,inlength,hash_value);
+            SHA_HW(message,tmp);
             hash_value=tmp;
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
