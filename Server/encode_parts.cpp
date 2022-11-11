@@ -265,7 +265,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
             printf("\n") ;  
-            SHA_384_HW(chunk_start_pos,chunk_end_pos,&(char*)input_buf[0],inlength,hash_value);
+            SHA_384_HW(chunk_start_pos,chunk_end_pos,input_buf,inlength,hash_value);
             // cout<<"HASH value="<<hash_value<<endl;
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
