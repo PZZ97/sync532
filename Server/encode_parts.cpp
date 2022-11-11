@@ -4,7 +4,6 @@
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/sha3.h>
 #include <math.h>
-#include <vector>
 using namespace std;
 #define HASH_SIZE SHA3_384_DIGEST_SIZE
 #define PRIME 3
@@ -66,25 +65,19 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 {
 	int h[8] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
 	unsigned i, j;
-
     string chunk = packet;
     chunk.append(1);
     while (chunk.length < 512){
         chunk.append(0);
     }
-
     uint32_t ah[8];
-
     const uint8_t *p = chunk;
-
    //  Initialize working variables to current hash value: 
     for (i = 0; i < 8; i++)
         ah[i] = h[i];
-
      //Compression function main loop: 
     for (i = 0; i < 4; i++) {
         uint32_t w[16];
-
         for (j = 0; j < 16; j++) {
             if (i == 0) {
                 w[j] = (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 |
@@ -102,7 +95,6 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
             const uint32_t s0 = right_rot(ah[0], 2) ^ right_rot(ah[0], 13) ^ right_rot(ah[0], 22);
             const uint32_t maj = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
             const uint32_t temp2 = s0 + maj;
-
             ah[7] = ah[6];
             ah[6] = ah[5];
             ah[5] = ah[4];
@@ -113,12 +105,10 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
             ah[0] = temp1 + temp2;
         }
     }
-
     // Add the compressed chunk to the current hash value: 
     for (i = 0; i < 8; i++)
         h[i] += ah[i];
 	
-
 // Produce the final hash value: 
 	for (i = 0, j = 0; i < 8; i++)
 	{
@@ -129,41 +119,22 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 	}
 }
 */
-// void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value){
-//     // https://edstem.org/us/courses/27305/discussion/2053707
-//     //
-//     unsigned char shaSum[SHA3_384_DIGEST_SIZE];
-//     wc_Sha3 sha3_384;
-//     wc_InitSha3_384(&sha3_384,NULL,INVALID_DEVID);
-//     // printf("")
-//     wc_Sha3_384_Update(&sha3_384, (packet+begin), end-begin+1);  // not sure about boundary
-//     wc_Sha3_384_Final(&sha3_384, shaSum);
-//     printf("shaSum=%s\n",shaSum);
-
-//     for(int i=0;i<SHA3_384_DIGEST_SIZE;i+=1){
-// //        hash_value[i]=shaSum[i];
-//         hash_value+=shaSum[i];
-//     }
-// }
-
-void SHA_384_HW_2(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value){
+void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value){
     // https://edstem.org/us/courses/27305/discussion/2053707
     //
-    unsigned char shaSum[SHA3_384_DIGEST_SIZE];
+    char shaSum[SHA3_384_DIGEST_SIZE];
     wc_Sha3 sha3_384;
     wc_InitSha3_384(&sha3_384,NULL,INVALID_DEVID);
     // printf("")
-    wc_Sha3_384_Update(&sha3_384, (const unsigned char*)packet, end-begin+1);  // not sure about boundary
-    wc_Sha3_384_Final(&sha3_384, shaSum);
-    // printf("shaSum=%s\n",shaSum);
-
-    for(int i=0;i<SHA3_384_DIGEST_SIZE;i+=1){
+    wc_Sha3_384_Update(&sha3_384, (packet+begin), end-begin+1);  // not sure about boundary
+    wc_Sha3_384_Final(&sha3_384, (unsigned char*)shaSum);
+    printf("shaSum=%s\n",shaSum);
+    for(int i=0;i<SHA3_384_DIGEST_SIZE;i++){
 //        hash_value[i]=shaSum[i];
-        printf("%x",shaSum[i]);
         hash_value+=shaSum[i];
     }
-    cout<<endl;
 }
+
 CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
     static unordered_map<HASH,CHUNK_idx_t> umap;
     CHUNK_idx_t idx= umap[hash_value];
@@ -212,43 +183,49 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
     // return output_code;
 }
 
-vector<int> LZW_vec(int chunk_start,int chunk_end,string &s1,int packet_size){
 
-    unordered_map<string, int> table;
-    // build the original table 
-    for (int i = 0; i <= 255; i++) {
-        string ch = "";
-        ch += char(i);
-        table[ch] = i;
-    }
-    string p = "", c = "";
-    p += s1[0];
-    int code = 256;
-    int length = chunk_end-chunk_start+1;
-    vector<int> output_code;
-    for (int i = 0; i <length; i++) {
-        if (i != s1.length() - 1)
-            c += s1[chunk_start+i + 1];
-        if (table.find(p + c) != table.end()) {
-            p = p + c;
+#ifdef __TESTMAIN__
+IDXQ q; // queue for  chunk index & chunk end pos
+int main(){
+
+
+    // while(get buffer from packet): 
+    // {
+        //get_packet()
+        CDC( packet,packet_size,  q);   // queue<pair<CHUNK_idx_t,int>> q;
+        std::string s_packet(reinterpret_cast<char*>(packet));
+        int start_pos= 0;
+        int prev_end_pos=0;
+        while(q.size()>0){
+            pair<CHUNK_idx_t,CHUNK_pos_t> index =q.front();
+            prev_end_pos= index.second;
+            q.pop();
+            if(start_pos!=0){
+                start_pos=prev_end_pos+1;
+            }
+            
+            // arrary<unsigned char,256bits>
+            HASH hash_value;
+            SHA_256(index.first, packet, packet_size,  hash_value);
+            
+            // return value of deduplication is unique chunk index if find index, else -1
+            CHUNK_idx_t sent =deduplication(index.first,hash_value);
+            if(sent ==-1 ){
+
+                vector<unsigned char> output_code;
+                LZW(start_pos,index.second,s_packet,packet_size,output_code);
+
+                //send (output_code);
+            }
+            else{
+                //send(sent);
+            }
         }
-        else {
-            // cout << p << "\t" << table[p] << "\t\t"
-            //      << p + c << "\t" << code << endl;
-            output_code.push_back(table[p]);
-            table[p + c] = code;
-            code++;
-            p = c;
-        }
-        c = "";
-    }
-    // cout << p << "\t" << table[p] << endl;
-    // output_code[(*outlen)++]=table[p];
-    output_code.push_back(table[p]);
-    return output_code;
+    // }
+
 }
 
-
+#endif
 
 /* &file[offset]->output_buf */
 
@@ -262,8 +239,11 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     CHUNK_pos_t chunk_start_pos= 0;
     CHUNK_pos_t chunk_end_pos=-1;
     while(q_chunk.size()>0){    // pop out each chunk and manipulate each chunk in order 
-            chunk_start_pos=chunk_end_pos+1;
+            // if(chunk_start_pos!=0){
+                chunk_start_pos=chunk_end_pos+1;
+            // }
             cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
+            // uint32_t header=0;  // LZW header
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
             chunk_end_pos= index[1];
@@ -272,31 +252,27 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
 
             // typedef std::array<unsigned char,HASH_SIZE> HASH
-            HASH hash_value=0;
-            // for(int i=0;i<HASH_SIZE;i++)
-            //     printf("%x",hash_value[i]);
-            // printf("\n") ;  
-            unsigned char message[inlength];
-            for(int i=chunk_start_pos;i<chunk_end_pos+1;i++)
-                message[i-chunk_start_pos]=input_buf[i];
-
-            // SHA_384_HW(chunk_start_pos,chunk_end_pos,input_buf,inlength,hash_value);
-            SHA_384_HW_2(chunk_start_pos,chunk_end_pos,message,inlength,hash_value);
-
-            // for(int i=0;i<HASH_SIZE;i++)
-            //     printf("%x",hash_value[i]);
+            HASH hash_value;
+            for(int i=0;i<HASH_SIZE;i++)
+                printf("%x",hash_value[i]);
+            printf("\n") ;  
+            SHA_384_HW(chunk_start_pos,chunk_end_pos,input_buf,inlength,hash_value);
+            // cout<<"HASH value="<<hash_value<<endl;
+            for(int i=0;i<HASH_SIZE;i++)
+                printf("%x",hash_value[i]);
             printf("\n") ;   
             // return value of deduplication is unique chunk index if find index, else -1
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
             if(sent ==-1 ){
                 
                 // vector<unsigned char> output_code;
-
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
                 cout<<"#generate LZW"<<endl;//, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
+            
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                // vector<int> output_code=LZW_vec(chunk_start_pos,chunk_end_pos,s_packet,inlength);
+                //send (output_code);
+                outlen--;
                 union {
                     uint32_t header;
                     uint8_t arr[4];
@@ -307,14 +283,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
               
                 memcpy(&output_buf[*outlength],output_code,outlen);
-                (*outlength)+=outlen;
-                // for(int i=0;i<output_code.size()*4;i+=4){
-                //     output_buf[*outlength+i]=   (output_code[i]&0xf000)>>12;
-                //     output_buf[*outlength+i+1]=(output_code[i]&0x0f00)>>8;
-                //     output_buf[*outlength+i+2]=(output_code[i]&0xf0f0)>>4;
-                //     output_buf[*outlength+i+3]=(output_code[i]&0x000f)>>12;
-                // }
-                // *outlength+=output_code.size()*4;
+                *outlength+=outlen;
             }
             else{
                 union {
@@ -323,6 +292,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 }u;
                 u.header = sent<<1;
                 u.header|=1;
+                // u.header=0x80000000|sent;
                 cout <<"\t#repeat chunk, chunk id="<< (u.header>>1) <<"\t"<< endl;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
