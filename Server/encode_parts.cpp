@@ -4,6 +4,7 @@
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/sha3.h>
 #include <math.h>
+#include <vector>
 using namespace std;
 #define HASH_SIZE SHA3_384_DIGEST_SIZE
 #define PRIME 3
@@ -223,7 +224,6 @@ vector<int> LZW_vec(int chunk_start,int chunk_end,string &s1,int packet_size){
     p += s1[0];
     int code = 256;
     int length = chunk_end-chunk_start+1;
-    *outlen=0;
     vector<int> output_code;
     for (int i = 0; i <length; i++) {
         if (i != s1.length() - 1)
@@ -235,7 +235,6 @@ vector<int> LZW_vec(int chunk_start,int chunk_end,string &s1,int packet_size){
             // cout << p << "\t" << table[p] << "\t\t"
             //      << p + c << "\t" << code << endl;
             output_code.push_back(table[p]);
-            output_code[(*outlen)++] = table[p];
             table[p + c] = code;
             code++;
             p = c;
@@ -300,7 +299,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 // unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
                 cout<<"#generate LZW"<<endl;//, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
             
-                vector<int> output_code=LZW2(chunk_start_pos,chunk_end_pos,s_packet,inlength);
+                vector<int> output_code=LZW_vec(chunk_start_pos,chunk_end_pos,s_packet,inlength);
                 //send (output_code);
                 // outlen--;
                 union {
@@ -314,7 +313,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
               
                 // memcpy(&output_buf[*outlength],output_code,outlen);
-                for(i=0;i<output_code.size()*4;i+=4){
+                for(int i=0;i<output_code.size()*4;i+=4){
                     output_buf[*outlength+i]=   (output_code[i]&0xf000)>>12;
                     output_buf[*outlength+i+1]=(output_code[i]&0x0f00)>>8;
                     output_buf[*outlength+i+2]=(output_code[i]&0xf0f0)>>4;
