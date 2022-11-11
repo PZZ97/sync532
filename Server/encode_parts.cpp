@@ -274,7 +274,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
 
             // typedef std::array<unsigned char,HASH_SIZE> HASH
-            HASH hash_value;
+            HASH hash_value=0;
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
             printf("\n") ;  
