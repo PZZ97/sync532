@@ -236,8 +236,8 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
         }
         c = "";
         appeartimes++;
-        if(appeartimes==8)
-         printf(" loop");
+        // if(appeartimes==8)
+        //  printf(" loop");
         appeartimes%=8;
     }
             if(appeartimes==0){
@@ -292,13 +292,13 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     CHUNK_pos_t chunk_end_pos=-1;
     while(q_chunk.size()>0){    // pop out each chunk and manipulate each chunk in order 
             chunk_start_pos=chunk_end_pos+1;
-            cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
+            // cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
             chunk_end_pos= index[1];
             q_chunk.pop();
 
-            cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
+            // cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
 
             HASH hash_value;
             char message[inlength];
@@ -322,7 +322,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                printf("Output len%d",outlen);
+                // printf("Output len%d",outlen);
                 //send (output_code);
                 outlen--;
                 union {
