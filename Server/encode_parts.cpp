@@ -237,11 +237,9 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
         c = "";
         appeartimes++;
         if(appeartimes==8)
-        //  printf("\n loop\n");
+         printf("\n loop\n");
         appeartimes%=8;
     }
-    // cout << p << "\t" << table[p] << endl;
-    // output_code[(*outlen)++]=table[p];
             if(appeartimes==0){
                 output_code[(*outlen)++] |= table[p]>>5;
                 output_code[(*outlen)++] |= table[p] <<3;
@@ -279,6 +277,7 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
         // cout<<"\npadding"<<endl;
         output_code[(*outlen)++]=0;
     }
+
 }
 /* &file[offset]->output_buf */
 
@@ -306,7 +305,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
                 message[i-chunk_start_pos]=input_buf[i];
             }
-            char tmp[HASH_SIZE];
+            char tmp[HASH_SIZE+1];
             strcpy(tmp,hash_value.c_str());
             SHA_HW(message,tmp);
             hash_value=tmp;
@@ -324,6 +323,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
+                printf("Output len%d",outlen)
                 //send (output_code);
                 outlen--;
                 union {
