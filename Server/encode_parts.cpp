@@ -283,7 +283,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
             printf("\n") ;  
-            char message[inlength];
+            unsigned char message[inlength];
             for(int i=chunk_start_pos;i<chunk_end_pos+1;i++)
                 message[i-chunk_start_pos]=input_buf[i];
 
