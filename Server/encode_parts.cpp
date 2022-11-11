@@ -2,10 +2,12 @@
 #include <unordered_map>
 #include <iostream>
 #include <wolfssl/options.h>
-#include <wolfssl/wolfcrypt/sha3.h>
+// #include <wolfssl/wolfcrypt/sha3.h>
+#include <wolfssl/wolfcrypt/sha.h>
 #include <math.h>
 using namespace std;
-#define HASH_SIZE SHA3_384_DIGEST_SIZE
+#define HASH_SIZE SHA3_DIGEST_SIZE
+// #define HASH_SIZE SHA3_384_DIGEST_SIZE
 #define PRIME 3
 #define WIN_SIZE 16
 #define MODULUS 256
@@ -128,21 +130,36 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 	}
 }
 */
-void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value){
+// void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value){
+//     // https://edstem.org/us/courses/27305/discussion/2053707
+//     //
+//     char shaSum[SHA3_384_DIGEST_SIZE];
+//     wc_Sha3 sha3_384;
+//     wc_InitSha3_384(&sha3_384,NULL,INVALID_DEVID);
+//     // printf("")
+//     wc_Sha3_384_Update(&sha3_384, (packet+begin), end-begin+1);  // not sure about boundary
+//     wc_Sha3_384_Final(&sha3_384, (unsigned char*)shaSum);
+//     printf("shaSum=%s\n",shaSum);
+//     for(int i=0;i<SHA3_384_DIGEST_SIZE;i++){
+// //        hash_value[i]=shaSum[i];
+//         hash_value+=shaSum[i];
+//     }
+// }
+
+void SHA_HW(char* message, char*digest){
     // https://edstem.org/us/courses/27305/discussion/2053707
-    //
     char shaSum[SHA3_384_DIGEST_SIZE];
-    wc_Sha3 sha3_384;
-    wc_InitSha3_384(&sha3_384,NULL,INVALID_DEVID);
-    // printf("")
-    wc_Sha3_384_Update(&sha3_384, (packet+begin), end-begin+1);  // not sure about boundary
-    wc_Sha3_384_Final(&sha3_384, (unsigned char*)shaSum);
+    Sha sha;
+    wc_InitSha(&sha,NULL,INVALID_DEVID);
+    wc_ShaUpdate(&sha, (const unsigned char*)message, strlen(message)); 
+    wc_ShaFinal(&sha, (unsigned char*)digest);
     printf("shaSum=%s\n",shaSum);
-    for(int i=0;i<SHA3_384_DIGEST_SIZE;i++){
-//        hash_value[i]=shaSum[i];
-        hash_value+=shaSum[i];
-    }
+//     for(int i=0;i<SHA3_384_DIGEST_SIZE;i++){
+// //        hash_value[i]=shaSum[i];
+//         hash_value+=shaSum[i];
+//     }
 }
+
 
 CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
     static unordered_map<HASH,CHUNK_idx_t> umap;
@@ -166,76 +183,103 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
         table[ch] = i;
     }
     string p = "", c = "";
-    p += s1[0];
+    p += s1[chunk_start];
     int code = 256;
-    int length = chunk_end-chunk_start+1;
+
     *outlen=0;
-    for (int i = 0; i <length; i++) {
-        if (i != s1.length() - 1)
-            c += s1[chunk_start+i + 1];
+    int appeartimes=0;
+    int bitsize=0;
+    for (int i = chunk_start; i <chunk_end; i++) {
+        printf("\n%c,",s1[i]);
+        if (i != chunk_end - 1)
+            c += s1[i + 1];
         if (table.find(p + c) != table.end()) {
+            printf(",i=%d",i);
+            printf("str[i]=%c",s1[i]);
             p = p + c;
         }
         else {
-            // cout << p << "\t" << table[p] << "\t\t"
-            //      << p + c << "\t" << code << endl;
-            // output_code.push_back(table[p]);
-            output_code[(*outlen)++] = table[p];
+            if(appeartimes==0){
+                 output_code[(*outlen)++] |= table[p]>>5;
+                 output_code[(*outlen)++] |= table[p] <<3;
+            }
+            else if(appeartimes==1){
+                output_code[(*outlen)++]|=table[p]>>2;
+                output_code[(*outlen)]|=table[p] <<6;
+            }
+            else if(appeartimes==2){
+                output_code[(*outlen)++]|=table[p]>>7;
+                output_code[(*outlen)++]|=table[p]<<1;
+            }
+            else if(appeartimes==3){
+                output_code[(*outlen)++]|=table[p]>>4;
+                output_code[(*outlen)++]|=table[p]<<4;
+            }
+            else if(appeartimes==4){
+                output_code[(*outlen)++]|=table[p]>>1;
+                output_code[(*outlen)]|=table[p]<<7;
+            }
+            else if(appeartimes==5){
+                output_code[(*outlen)++]|=table[p]>>6;
+                output_code[(*outlen)++]|=table[p]<<2;
+            }
+            else if(appeartimes==6){
+                output_code[(*outlen)++]|=table[p]>>3;
+                output_code[(*outlen)++]|=table[p]<<5;
+            }                
+            else if(appeartimes==7){
+                output_code[(*outlen)++]|=table[p];
+            }           
             table[p + c] = code;
             code++;
             p = c;
         }
         c = "";
+        appeartimes++;
+        if(appeartimes==8)
+         printf("\n loop\n");
+        appeartimes%=8;
     }
     // cout << p << "\t" << table[p] << endl;
-    output_code[(*outlen)++]=table[p];
-    // return output_code;
+    // output_code[(*outlen)++]=table[p];
+            if(appeartimes==0){
+                output_code[(*outlen)++] |= table[p]>>5;
+                output_code[(*outlen)++] |= table[p] <<3;
+            }
+            else if(appeartimes==1){
+                output_code[(*outlen)++]|=table[p]>>2;
+                output_code[(*outlen)]|=table[p] <<6;
+            }
+            else if(appeartimes==2){
+                output_code[(*outlen)++]|=table[p]>>7;
+                output_code[(*outlen)++]|=table[p]<<1;
+            }
+            else if(appeartimes==3){
+                output_code[(*outlen)++]|=table[p]>>4;
+                output_code[(*outlen)++]|=table[p]<<4;
+            }
+            else if(appeartimes==4){
+                output_code[(*outlen)++]|=table[p]>>1;
+                output_code[(*outlen)]|=table[p]<<7;
+            }
+            else if(appeartimes==5){
+                output_code[(*outlen)++]|=table[p]>>6;
+                output_code[(*outlen)++]|=table[p]<<2;
+            }
+            else if(appeartimes==6){
+                output_code[(*outlen)++]|=table[p]>>3;
+                output_code[(*outlen)++]|=table[p]<<5;
+            }                
+            else if(appeartimes==7){
+                output_code[(*outlen)++]|=table[p];
+            }   
+
+    // (*outlen)=(*outlen)+bitsize/8+1;
+    while((*outlen)%8!=0){  // padding
+        cout<<"\npadding"<<endl;
+        output_code[(*outlen)++]=0;
+    }
 }
-
-
-#ifdef __TESTMAIN__
-IDXQ q; // queue for  chunk index & chunk end pos
-int main(){
-
-
-    // while(get buffer from packet): 
-    // {
-        //get_packet()
-        CDC( packet,packet_size,  q);   // queue<pair<CHUNK_idx_t,int>> q;
-        std::string s_packet(reinterpret_cast<char*>(packet));
-        int start_pos= 0;
-        int prev_end_pos=0;
-        while(q.size()>0){
-            pair<CHUNK_idx_t,CHUNK_pos_t> index =q.front();
-            prev_end_pos= index.second;
-            q.pop();
-            if(start_pos!=0){
-                start_pos=prev_end_pos+1;
-            }
-            
-            // arrary<unsigned char,256bits>
-            HASH hash_value;
-            SHA_256(index.first, packet, packet_size,  hash_value);
-            
-            // return value of deduplication is unique chunk index if find index, else -1
-            CHUNK_idx_t sent =deduplication(index.first,hash_value);
-            if(sent ==-1 ){
-
-                vector<unsigned char> output_code;
-                LZW(start_pos,index.second,s_packet,packet_size,output_code);
-
-                //send (output_code);
-            }
-            else{
-                //send(sent);
-            }
-        }
-    // }
-
-}
-
-#endif
-
 /* &file[offset]->output_buf */
 
 uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
@@ -248,28 +292,28 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     CHUNK_pos_t chunk_start_pos= 0;
     CHUNK_pos_t chunk_end_pos=-1;
     while(q_chunk.size()>0){    // pop out each chunk and manipulate each chunk in order 
-            // if(chunk_start_pos!=0){
-                chunk_start_pos=chunk_end_pos+1;
-            // }
+            chunk_start_pos=chunk_end_pos+1;
             cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
-            // uint32_t header=0;  // LZW header
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
             chunk_end_pos= index[1];
             q_chunk.pop();
 
-            cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
+            // cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
 
-            // typedef std::array<unsigned char,HASH_SIZE> HASH
             HASH hash_value;
+            char message[inlength];
+            for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
+                message[i-chunk_start_pos]=input_buf[i];
+            }
+            char tmp[HASH_SIZE];
+            strcpy(tmp,hash_value.c_str());
+            SHA_HW(chunk_start_pos,chunk_end_pos,input_buf,inlength,hash_value);
+            hash_value=tmp;
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
             printf("\n") ;  
-            SHA_384_HW(chunk_start_pos,chunk_end_pos,input_buf,inlength,hash_value);
-            // cout<<"HASH value="<<hash_value<<endl;
-            for(int i=0;i<HASH_SIZE;i++)
-                printf("%x",hash_value[i]);
-            printf("\n") ;   
+
             // return value of deduplication is unique chunk index if find index, else -1
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
             if(sent ==-1 ){

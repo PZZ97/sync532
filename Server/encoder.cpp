@@ -104,7 +104,6 @@ int main(int argc, char* argv[]) {
 		ethernet_timer.stop();
 
 		count++;
-
 		// get packet
 		unsigned char* buffer = input[writer];
 
