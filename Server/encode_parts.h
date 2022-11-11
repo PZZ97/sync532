@@ -43,7 +43,7 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_index);
     @ hash_value: OUTPUT
 */
 
-void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, uint8* packet, unsigned int packet_size, HASH& hash_value);
+void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value);
 
 
 // deduplication
