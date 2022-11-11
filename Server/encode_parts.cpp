@@ -291,9 +291,8 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             if(sent ==-1 ){
                 
                 // vector<unsigned char> output_code;
-                // size_t outlen;
 
-                // unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
+                unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
                 cout<<"#generate LZW"<<endl;//, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
