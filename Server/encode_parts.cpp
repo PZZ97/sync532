@@ -137,7 +137,7 @@ void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsign
     // printf("")
     wc_Sha3_384_Update(&sha3_384, (packet+begin), end-begin+1);  // not sure about boundary
     wc_Sha3_384_Final(&sha3_384, (unsigned char*)shaSum);
-
+    prinf("shaSum=%s\n",shaSum);
     for(int i=0;i<SHA3_384_DIGEST_SIZE;i++){
 //        hash_value[i]=shaSum[i];
         hash_value+=shaSum[i];
