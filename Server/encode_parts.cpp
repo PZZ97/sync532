@@ -210,49 +210,45 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
     // return output_code;
 }
 
+vector<int> LZW_vec(int chunk_start,int chunk_end,string &s1,int packet_size){
 
-#ifdef __TESTMAIN__
-IDXQ q; // queue for  chunk index & chunk end pos
-int main(){
-
-
-    // while(get buffer from packet): 
-    // {
-        //get_packet()
-        CDC( packet,packet_size,  q);   // queue<pair<CHUNK_idx_t,int>> q;
-        std::string s_packet(reinterpret_cast<char*>(packet));
-        int start_pos= 0;
-        int prev_end_pos=0;
-        while(q.size()>0){
-            pair<CHUNK_idx_t,CHUNK_pos_t> index =q.front();
-            prev_end_pos= index.second;
-            q.pop();
-            if(start_pos!=0){
-                start_pos=prev_end_pos+1;
-            }
-            
-            // arrary<unsigned char,256bits>
-            HASH hash_value;
-            SHA_256(index.first, packet, packet_size,  hash_value);
-            
-            // return value of deduplication is unique chunk index if find index, else -1
-            CHUNK_idx_t sent =deduplication(index.first,hash_value);
-            if(sent ==-1 ){
-
-                vector<unsigned char> output_code;
-                LZW(start_pos,index.second,s_packet,packet_size,output_code);
-
-                //send (output_code);
-            }
-            else{
-                //send(sent);
-            }
+    unordered_map<string, int> table;
+    // build the original table 
+    for (int i = 0; i <= 255; i++) {
+        string ch = "";
+        ch += char(i);
+        table[ch] = i;
+    }
+    string p = "", c = "";
+    p += s1[0];
+    int code = 256;
+    int length = chunk_end-chunk_start+1;
+    *outlen=0;
+    vector<int> output_code;
+    for (int i = 0; i <length; i++) {
+        if (i != s1.length() - 1)
+            c += s1[chunk_start+i + 1];
+        if (table.find(p + c) != table.end()) {
+            p = p + c;
         }
-    // }
-
+        else {
+            // cout << p << "\t" << table[p] << "\t\t"
+            //      << p + c << "\t" << code << endl;
+            output_code.push_back(table[p]);
+            output_code[(*outlen)++] = table[p];
+            table[p + c] = code;
+            code++;
+            p = c;
+        }
+        c = "";
+    }
+    // cout << p << "\t" << table[p] << endl;
+    // output_code[(*outlen)++]=table[p];
+    output_code.push_back(table[p]);
+    return output_code;
 }
 
-#endif
+
 
 /* &file[offset]->output_buf */
 
@@ -299,24 +295,32 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             if(sent ==-1 ){
                 
                 // vector<unsigned char> output_code;
-                unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
+                // size_t outlen;
+
+                // unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
                 cout<<"#generate LZW"<<endl;//, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
             
-                size_t outlen;
-                LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
+                vector<int> output_code=LZW2(chunk_start_pos,chunk_end_pos,s_packet,inlength);
                 //send (output_code);
-                outlen--;
+                // outlen--;
                 union {
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
-                u.header = (uint32_t)outlen<<1;
-                memcpy(&output_buf[*outlength],u.arr,4);
-                (*outlength)+=4;
+                // u.header = (uint32_t)outlen<<1;
+                u.header = (uint32_t)output_code.size()*4<<1;
+                // memcpy(&output_buf[*outlength],u.arr,4);
+                // (*outlength)+=4;
                 cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
               
-                memcpy(&output_buf[*outlength],output_code,outlen);
-                *outlength+=outlen;
+                // memcpy(&output_buf[*outlength],output_code,outlen);
+                for(i=0;i<output_code.size()*4;i+=4){
+                    output_buf[*outlength+i]=   (output_code[i]&0xf000)>>12;
+                    output_buf[*outlength+i+1]=(output_code[i]&0x0f00)>>8;
+                    output_buf[*outlength+i+2]=(output_code[i]&0xf0f0)>>4;
+                    output_buf[*outlength+i+3]=(output_code[i]&0x000f)>>12;
+                }
+                *outlength+=output_code.size()*4;
             }
             else{
                 union {
