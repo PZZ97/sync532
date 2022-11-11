@@ -128,7 +128,7 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 	}
 }
 */
-void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, uint8* packet, unsigned int packet_size, HASH& hash_value){
+void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value){
     // https://edstem.org/us/courses/27305/discussion/2053707
     //
     char shaSum[SHA3_384_DIGEST_SIZE];
