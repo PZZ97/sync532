@@ -65,19 +65,25 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 {
 	int h[8] = { 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19 };
 	unsigned i, j;
+
     string chunk = packet;
     chunk.append(1);
     while (chunk.length < 512){
         chunk.append(0);
     }
+
     uint32_t ah[8];
+
     const uint8_t *p = chunk;
+
    //  Initialize working variables to current hash value: 
     for (i = 0; i < 8; i++)
         ah[i] = h[i];
+
      //Compression function main loop: 
     for (i = 0; i < 4; i++) {
         uint32_t w[16];
+
         for (j = 0; j < 16; j++) {
             if (i == 0) {
                 w[j] = (uint32_t) p[0] << 24 | (uint32_t) p[1] << 16 |
@@ -95,6 +101,7 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
             const uint32_t s0 = right_rot(ah[0], 2) ^ right_rot(ah[0], 13) ^ right_rot(ah[0], 22);
             const uint32_t maj = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
             const uint32_t temp2 = s0 + maj;
+
             ah[7] = ah[6];
             ah[6] = ah[5];
             ah[5] = ah[4];
@@ -105,10 +112,12 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
             ah[0] = temp1 + temp2;
         }
     }
+
     // Add the compressed chunk to the current hash value: 
     for (i = 0; i < 8; i++)
         h[i] += ah[i];
 	
+
 // Produce the final hash value: 
 	for (i = 0, j = 0; i < 8; i++)
 	{
