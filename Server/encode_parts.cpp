@@ -261,11 +261,8 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     CHUNK_pos_t chunk_start_pos= 0;
     CHUNK_pos_t chunk_end_pos=-1;
     while(q_chunk.size()>0){    // pop out each chunk and manipulate each chunk in order 
-            // if(chunk_start_pos!=0){
-                chunk_start_pos=chunk_end_pos+1;
-            // }
+            chunk_start_pos=chunk_end_pos+1;
             cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
-            // uint32_t header=0;  // LZW header
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
             chunk_end_pos= index[1];
@@ -298,27 +295,26 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
                 // unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*(chunk_end_pos-chunk_start_pos+1));
                 cout<<"#generate LZW"<<endl;//, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
-            
-                vector<int> output_code=LZW_vec(chunk_start_pos,chunk_end_pos,s_packet,inlength);
-                //send (output_code);
+                size_t outlen;
+                LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
+                // vector<int> output_code=LZW_vec(chunk_start_pos,chunk_end_pos,s_packet,inlength);
                 // outlen--;
                 union {
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
-                // u.header = (uint32_t)outlen<<1;
-                u.header = (uint32_t)output_code.size()*4<<1;
-                // memcpy(&output_buf[*outlength],u.arr,4);
-                // (*outlength)+=4;
+                u.header = (uint32_t)outlen<<1;
+                memcpy(&output_buf[*outlength],u.arr,4);
+                (*outlength)+=4;
                 cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
               
-                // memcpy(&output_buf[*outlength],output_code,outlen);
-                for(int i=0;i<output_code.size()*4;i+=4){
-                    output_buf[*outlength+i]=   (output_code[i]&0xf000)>>12;
-                    output_buf[*outlength+i+1]=(output_code[i]&0x0f00)>>8;
-                    output_buf[*outlength+i+2]=(output_code[i]&0xf0f0)>>4;
-                    output_buf[*outlength+i+3]=(output_code[i]&0x000f)>>12;
-                }
+                memcpy(&output_buf[*outlength],output_code,outlen);
+                // for(int i=0;i<output_code.size()*4;i+=4){
+                //     output_buf[*outlength+i]=   (output_code[i]&0xf000)>>12;
+                //     output_buf[*outlength+i+1]=(output_code[i]&0x0f00)>>8;
+                //     output_buf[*outlength+i+2]=(output_code[i]&0xf0f0)>>4;
+                //     output_buf[*outlength+i+3]=(output_code[i]&0x000f)>>12;
+                // }
                 *outlength+=output_code.size()*4;
             }
             else{
@@ -328,7 +324,6 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 }u;
                 u.header = sent<<1;
                 u.header|=1;
-                // u.header=0x80000000|sent;
                 cout <<"\t#repeat chunk, chunk id="<< (u.header>>1) <<"\t"<< endl;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
