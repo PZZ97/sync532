@@ -128,13 +128,14 @@ void SHA_256(CHUNK_idx_t q_chunk_index, char* packet, unsigned int packet_size, 
 	}
 }
 */
-void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, char* packet, unsigned int packet_size, HASH& hash_value){
+void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, uint8* packet, unsigned int packet_size, HASH& hash_value){
     // https://edstem.org/us/courses/27305/discussion/2053707
     //
     char shaSum[SHA3_384_DIGEST_SIZE];
     wc_Sha3 sha3_384;
     wc_InitSha3_384(&sha3_384,NULL,INVALID_DEVID);
-    wc_Sha3_384_Update(&sha3_384, (const unsigned char*)(packet+begin), end-begin+1);  // not sure about boundary
+    // printf("")
+    wc_Sha3_384_Update(&sha3_384, (packet+begin), end-begin+1);  // not sure about boundary
     wc_Sha3_384_Final(&sha3_384, (unsigned char*)shaSum);
 
     for(int i=0;i<SHA3_384_DIGEST_SIZE;i++){
@@ -142,6 +143,7 @@ void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, char* packet, unsigned int pa
         hash_value+=shaSum[i];
     }
 }
+
 CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
     static unordered_map<HASH,CHUNK_idx_t> umap;
     CHUNK_idx_t idx= umap[hash_value];
@@ -263,7 +265,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
             printf("\n") ;  
-            SHA_384_HW(chunk_start_pos,chunk_end_pos,(char*)input_buf,inlength,hash_value);
+            SHA_384_HW(chunk_start_pos,chunk_end_pos,&(char*)input_buf[0],inlength,hash_value);
             // cout<<"HASH value="<<hash_value<<endl;
             for(int i=0;i<HASH_SIZE;i++)
                 printf("%x",hash_value[i]);
