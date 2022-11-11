@@ -39,7 +39,7 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 			hash = hash_func2(buff, i, hash);
 		}
 		if ((hash % MODULUS) == TARGET) {
-			chunk_q.push({chunk_index++,i});
+			chunk_q.push({chunk_index++,i-1});
 		}
 	}
 
@@ -260,6 +260,9 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
             // typedef std::array<unsigned char,HASH_SIZE> HASH
             HASH hash_value;
+            for(int i=0;i<HASH_SIZE;i++)
+                printf("%x",hash_value[i]);
+            printf("\n") ;  
             SHA_384_HW(chunk_start_pos,chunk_end_pos,(char*)input_buf,inlength,hash_value);
             // cout<<"HASH value="<<hash_value<<endl;
             for(int i=0;i<HASH_SIZE;i++)
@@ -276,6 +279,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
                 //send (output_code);
+                outlen--;
                 union {
                     uint32_t header;
                     uint8_t arr[4];
