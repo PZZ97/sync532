@@ -14,7 +14,6 @@ void LZW_HW(int chunk_start,int chunk_end,string &s1,unsigned char*output_code,s
 }
 void LZW_SW(int chunk_start,int chunk_end,string &s1,unsigned char*output_code,size_t * outlen){
     
-    memset(output_code,0,(chunk_end-chunk_start+1)*2);
     unordered_map<string, int> table;
     // build the original table 
     for (int i = 0; i <= 255; i++) {
