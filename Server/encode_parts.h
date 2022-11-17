@@ -63,6 +63,6 @@ CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value);
 // void LZW(int chunk_start,int chunk_end,std::string &s1,unsigned int packet_size,unsigned char*output_code,size_t * outlen);
 
 
-uint8_t encode(uint8_t * output_buf,uint8_t* input_buf, int inlength, int * outlength );
+// uint8_t encode(uint8_t * output_buf,uint8_t* input_buf, int inlength, int * outlength );
 
 #endif

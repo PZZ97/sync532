@@ -13,8 +13,8 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include "stopwatch.h"
-#include "lzw.h"
 #include "encode_parts.h"
+#include "lzw.h"
 
 #define NUM_PACKETS 8
 #define pipe_depth 4

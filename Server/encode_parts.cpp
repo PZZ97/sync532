@@ -1,4 +1,3 @@
-#include "lzw.h"
 
 #include "encode_parts.h"
 #include <unordered_map>
