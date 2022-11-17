@@ -1,4 +1,5 @@
-#include "encode_parts.h"
+// #include "encode_parts.h"
+#include "encoder.h"
 #include <unordered_map>
 #include <iostream>
 #include <math.h>

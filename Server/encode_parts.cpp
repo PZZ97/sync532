@@ -10,6 +10,7 @@ using namespace std;
 #define WIN_SIZE 16
 #define MODULUS 256
 #define TARGET 0
+void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*output_code,size_t * outlen){
 
 uint64_t hash_func(unsigned char* input, unsigned int pos)
 {
