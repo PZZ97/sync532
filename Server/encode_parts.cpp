@@ -189,7 +189,7 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
     *outlen=0;
     int appeartimes=0;
     int bitsize=0;
-    for (int i = chunk_start; i <chunk_end; i++) {
+    for (int i = chunk_start; i <=chunk_end; i++) {
         if (i != chunk_end - 1)
             c += s1[i + 1];
         if (table.find(p + c) != table.end()) {
