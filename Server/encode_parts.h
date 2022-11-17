@@ -2,13 +2,14 @@
 #define __SOURCE_H__
 
 
+#include <array>
 #include <queue>
 
 #include <string>
 #include <array>
 #include <vector>
-// #include <wolfssl/wolfcrypt/sha.h>
 
+// #include <wolfssl/wolfcrypt/sha.h>
 typedef int CHUNK_idx_t;  // index of unique chunk
 typedef int CHUNK_pos_t;  // index of chunk end pos in packet buffer
 typedef std::queue<std::array<int, 2>> IDXQ;    // {CHUNK_idx_t,CHUNK_pos_t}
@@ -42,8 +43,7 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_index);
     @ hash_value: OUTPUT
 */
 
-// void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value);
-void SHA_HW( uint8_t* message,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  HASH *digest_hash);
+void SHA_384_HW(CHUNK_pos_t begin,CHUNK_pos_t end, unsigned char* packet, unsigned int packet_size, HASH& hash_value);
 
 
 // deduplication
@@ -60,9 +60,9 @@ CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value);
 */
 
 // void LZW(int chunk_start,int chunk_end,std::string &s_packet,unsigned int packet_size,std::vector<unsigned char> &output_code);
-// void LZW(int chunk_start,int chunk_end,std::string &s1,unsigned int packet_size,unsigned char*output_code,size_t * outlen);
+void LZW(int chunk_start,int chunk_end,std::string &s1,unsigned int packet_size,unsigned char*output_code,size_t * outlen);
 
 
-// uint8_t encode(uint8_t * output_buf,uint8_t* input_buf, int inlength, int * outlength );
+uint8_t encode(uint8_t * output_buf,uint8_t* input_buf, int inlength, int * outlength );
 
 #endif
