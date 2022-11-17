@@ -43,11 +43,13 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 		if ((hash % MODULUS) == TARGET) {
 			chunk_q.push({chunk_index++,i-1});
             printf("->");
-            for(int jj=-4;jj<=0;jj++){
+            for(int jj=-10;jj<=0;jj++){
                 printf("%c",buff[i-1+jj]);
             }
 		}
 	}
+    chunk_q.push({chunk_index++,buff_size-1});  // the last chunk
+
 
 }
 
