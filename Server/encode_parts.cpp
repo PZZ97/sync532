@@ -13,6 +13,8 @@ using namespace std;
 #define MODULUS 256
 #define TARGET 0
 
+unordered_map<string, int> table;
+
 uint64_t hash_func(unsigned char* input, unsigned int pos)
 {
 //	unordered_map <int,int> uma2;
@@ -178,14 +180,6 @@ CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
 }
 
 void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*output_code,size_t * outlen){
-
-    unordered_map<string, int> table;
-    // build the original table 
-    for (int i = 0; i <= 255; i++) {
-        string ch = "";
-        ch += char(i);
-        table[ch] = i;
-    }
     string p = "", c = "";
     p += s1[chunk_start];
     unsigned int code = 256;
@@ -200,6 +194,7 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
             p = p + c;
         }
         else {
+            
             if(appeartimes==0){
                 output_code[(*outlen)++] |=( table[p]  &0b1111111100000)>>5;
                 output_code[(*outlen)] |= (table[p]    &0b0000000011111)<<3;
@@ -293,6 +288,12 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
 /* &file[offset]->output_buf */
 
 uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
+    for (int i = 0; i <= 255; i++) {
+        string ch = "";
+        ch += char(i);
+        table[ch] = i;
+    }
+
 
     *outlength =0;  // initialize output length
     IDXQ q_chunk;   // q_chunk: queue saves each chunk by identifing each chunk end position and chunk ID
@@ -308,9 +309,6 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             CHUNK_idx_t chunk_unique_id = index[0];
             chunk_end_pos= index[1];
             q_chunk.pop();
-
-            // cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
-
             HASH hash_value;
             char message[inlength];
             for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
@@ -337,6 +335,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
+                outlen++;
                 u.header = (uint32_t)outlen<<1;
                 printf("\nencode Header:%08x",u.header);
                 memcpy(&output_buf[*outlength],u.arr,4);
@@ -344,6 +343,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 // cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
                 memcpy(&output_buf[*outlength],output_code,outlen);
                 (*outlength)+=outlen;
+                free(output_code);
             }
             else{
                 printf("\ndedup");
