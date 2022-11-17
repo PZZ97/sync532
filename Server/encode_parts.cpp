@@ -65,7 +65,7 @@ void SHA_HW( uint8_t* message,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  H
     wc_ShaFinal(&sha, (unsigned char*)digest);
     cout<<"digest=";
     for(int i=0;i<=HASH_SIZE;i++)
-        cout<<digest[i];
+        printf("%02x",digest[i]);
     cout<<endl;
     *digest_hash=digest;
     
@@ -206,18 +206,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             chunk_end_pos= index[1];
             q_chunk.pop();
             HASH hash_value;
-            // char message[inlength];
-            // for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
-            //     message[i-chunk_start_pos]=input_buf[i];
-            // }
-            // char tmp[HASH_SIZE+1];
-            // strcpy(tmp,hash_value.c_str());
-            // SHA_HW(message,tmp);
-            // hash_value=tmp;
-
             SHA_HW(input_buf,chunk_start_pos,chunk_end_pos, &hash_value);
-            cout<<"hash_value=";
-            cout<<hash_value<<endl;
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
             if(sent ==-1 ){
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
