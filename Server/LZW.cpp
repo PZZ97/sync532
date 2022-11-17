@@ -1,5 +1,7 @@
 // #include "encode_parts.h"
-#include "lzw.h"
+// #include "lzw.h"
+#ifndef __LZW1_H__
+#define __LZW1_H__
 #include <unordered_map>
 #include <iostream>
 #include <math.h>
@@ -112,3 +114,4 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
     if((*outlen)%13!=0)
         output_code[++(*outlen)]=0;
 }
+#endif
