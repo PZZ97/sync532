@@ -1,5 +1,8 @@
 #include "encode_parts.h"
-
+#include <unordered_map>
+#include <iostream>
+#include <math.h>
+using namespace std;
 void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*output_code,size_t * outlen){
     memset(output_code,0,(chunk_end-chunk_start+1)*2);
     unordered_map<string, int> table;
