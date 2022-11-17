@@ -183,7 +183,6 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
     }
     if((*outlen)%13!=0)
         output_code[++(*outlen)]=0;
-
 }
 
 uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
