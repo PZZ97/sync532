@@ -38,10 +38,6 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 		}
 		if ((hash % MODULUS) == TARGET) {
 			chunk_q.push({chunk_index++,i-1});
-            // printf("->");
-            // for(int jj=-10;jj<=0;jj++){
-            //     printf("%c",buff[i-1+jj]);
-            // }
 		}
 	}
     chunk_q.push({chunk_index++,buff_size-1});  // the last chunk
@@ -49,23 +45,44 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 
 }
 
-void SHA_HW(char* message, char*digest){
+// void SHA_HW(char* message, char*digest){
+//     // https://edstem.org/us/courses/27305/discussion/2053707
+//     char shaSum[HASH_SIZE];
+//     Sha sha;
+//     wc_InitSha(&sha);
+//     wc_ShaUpdate(&sha, (const unsigned char*)message, strlen(message)); 
+//     wc_ShaFinal(&sha, (unsigned char*)digest);
+
+// }
+    // SHA_HW(input_buf,chunk_start_pos,chunk_end_pos, &hash_value);
+void SHA_HW( uint8_t* message_,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  HASH *digest){
     // https://edstem.org/us/courses/27305/discussion/2053707
+
+
     char shaSum[HASH_SIZE];
+    char digest[HASH_SIZE+1];
     Sha sha;
     wc_InitSha(&sha);
-    wc_ShaUpdate(&sha, (const unsigned char*)message, strlen(message)); 
+    wc_ShaUpdate(&sha, (const unsigned char*)message[chunk_start_pos],chunk_end-chunk_start+1 ); 
     wc_ShaFinal(&sha, (unsigned char*)digest);
 
-}
 
+            // char message[inlength];
+            // for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
+            //     message[i-chunk_start_pos]=input_buf[i];
+            // }
+            // char tmp[HASH_SIZE+1];
+            // strcpy(tmp,hash_value.c_str());
+            // SHA_HW(message,tmp);
+    hash_value=digest;
+            
+}
 
 CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
     static unordered_map<HASH,CHUNK_idx_t> umap;
     CHUNK_idx_t idx= umap[hash_value];
     if(idx!=0)  // get value
         return idx-1;
-
     umap[hash_value] =chunk_index+1;
     return -1;  
 }
@@ -196,15 +213,17 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             chunk_end_pos= index[1];
             q_chunk.pop();
             HASH hash_value;
-            char message[inlength];
-            for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
-                message[i-chunk_start_pos]=input_buf[i];
-            }
-            char tmp[HASH_SIZE+1];
-            strcpy(tmp,hash_value.c_str());
-            SHA_HW(message,tmp);
-            hash_value=tmp;
-        
+            // char message[inlength];
+            // for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
+            //     message[i-chunk_start_pos]=input_buf[i];
+            // }
+            // char tmp[HASH_SIZE+1];
+            // strcpy(tmp,hash_value.c_str());
+            // SHA_HW(message,tmp);
+            // hash_value=tmp;
+
+            SHA_HW(input_buf,chunk_start_pos,chunk_end_pos, &hash_value);
+
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
             if(sent ==-1 ){
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
