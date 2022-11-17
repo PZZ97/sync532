@@ -43,7 +43,6 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
     chunk_q.push({chunk_index++,buff_size-1});  // the last chunk
 }
 
-
 /*
 void SHA_HW(char* message, char*digest){
     // https://edstem.org/us/courses/27305/discussion/2053707
