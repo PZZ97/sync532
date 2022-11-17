@@ -301,7 +301,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             // cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
-            chunk_end_pos= index[1]+1;
+            chunk_end_pos= index[1];
             q_chunk.pop();
 
             // cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
