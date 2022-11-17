@@ -55,7 +55,7 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 
 // }
     // SHA_HW(input_buf,chunk_start_pos,chunk_end_pos, &hash_value);
-void SHA_HW( uint8_t* message_,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  HASH *digest){
+void SHA_HW( uint8_t* message_,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  HASH *digest_hash){
     // https://edstem.org/us/courses/27305/discussion/2053707
 
 
@@ -74,7 +74,7 @@ void SHA_HW( uint8_t* message_,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  
             // char tmp[HASH_SIZE+1];
             // strcpy(tmp,hash_value.c_str());
             // SHA_HW(message,tmp);
-    hash_value=digest;
+    *digest_hash=digest;
             
 }
 
