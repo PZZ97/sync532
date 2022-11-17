@@ -4,6 +4,8 @@
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/sha.h>
 #include <math.h>
+using namespace std;
+
 #define HASH_SIZE SHA_DIGEST_SIZE
 #define PRIME 3
 #define WIN_SIZE 16
