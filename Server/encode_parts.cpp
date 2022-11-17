@@ -286,7 +286,7 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
         // cout<<"\npadding"<<endl;
         output_code[++(*outlen)]=0;
     }
-    // outlen--;
+    outlen--;
 
 }
 
