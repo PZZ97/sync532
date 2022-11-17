@@ -14,6 +14,7 @@
 #include <sys/mman.h>
 #include "stopwatch.h"
 #include "encode_parts.h"
+#include <array>
 #define NUM_PACKETS 8
 #define pipe_depth 4
 #define DONE_BIT_L (1 << 7)
