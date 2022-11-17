@@ -279,13 +279,15 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
     }                
     else if(appeartimes==7){
         output_code[(*outlen)++]|=(table[p]    &0b1111100000000)>>8;
-        output_code[(*outlen)++]|=(table[p]    &0b0000011111111);
-    }    
+        output_code[(*outlen)]|=(table[p]    &0b0000011111111);
+    }
 
     while((*outlen)%8!=0){  // padding
         // cout<<"\npadding"<<endl;
-        output_code[(*outlen)++]=0;
+        output_code[++(*outlen)]=0;
     }
+    // outlen--;
+
 }
 
 /* &file[offset]->output_buf */
@@ -329,7 +331,6 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                outlen--;
                 printf("\noutlen=%08x",outlen);
                 /* outlen: length includes padding*/
                 union {
