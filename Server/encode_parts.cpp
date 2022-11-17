@@ -42,6 +42,10 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 		}
 		if ((hash % MODULUS) == TARGET) {
 			chunk_q.push({chunk_index++,i-1});
+            printf("->");
+            for(int jj=-4;jj<=0;jj++){
+                printf("%c",buff[i-1+jj]);
+            }
 		}
 	}
 
@@ -325,7 +329,8 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                printf("\noutlen=%d",outlen);
+                outlen--;
+                printf("\noutlen=%08x",outlen);
                 /* outlen: length includes padding*/
                 union {
                     uint32_t header;
