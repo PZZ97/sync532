@@ -281,13 +281,13 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
         output_code[(*outlen)++]|=(table[p]    &0b1111100000000)>>8;
         output_code[(*outlen)]|=(table[p]    &0b0000011111111);
     }
-    // if((*outlen)%13!=0)
-    //     output_code[++(*outlen)]=0;
-    
-    while((*outlen)%13!=0){  // padding
-        // cout<<"\npadding"<<endl;
+    if((*outlen)%13!=0)
         output_code[++(*outlen)]=0;
-    }
+    
+    // while((*outlen)%13!=0){  // padding
+    //     // cout<<"\npadding"<<endl;
+    //     output_code[++(*outlen)]=0;
+    // }
 
 }
 
