@@ -17,6 +17,6 @@
 // typedef std::queue<std::array<int, 2>> IDXQ;    // {CHUNK_idx_t,CHUNK_pos_t}
 
 // void LZW(int chunk_start,int chunk_end,std::string &s_packet,unsigned int packet_size,std::vector<unsigned char> &output_code);
-void LZW(CHUNK_pos_t chunk_start,CHUNK_pos_t chunk_end,std::string &s1,unsigned int packet_size,unsigned char*output_code,size_t * outlen);
+void LZW(int chunk_start,int chunk_end,std::string &s1,unsigned int packet_size,unsigned char*output_code,size_t * outlen);
 
 #endif
