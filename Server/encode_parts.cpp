@@ -5,7 +5,6 @@
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/sha.h>
 #include <math.h>
-#include "LZW.cpp"
 
 using namespace std;
 

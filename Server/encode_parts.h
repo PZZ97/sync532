@@ -8,9 +8,7 @@
 #include <array>
 #include <vector>
 // #include <wolfssl/wolfcrypt/sha.h>
-typedef int CHUNK_idx_t;  // index of unique chunk
-typedef int CHUNK_pos_t;  // index of chunk end pos in packet buffer
-typedef std::queue<std::array<int, 2>> IDXQ;    // {CHUNK_idx_t,CHUNK_pos_t}
+#include "lzw.h"
 
 //typedef std::array<unsigned char,HASH_SIZE> HASH;
 typedef std::string HASH;
