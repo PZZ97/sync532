@@ -40,10 +40,10 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 		}
 		if ((hash % MODULUS) == TARGET) {
 			chunk_q.push({chunk_index++,i-1});
-            printf("->");
-            for(int jj=-10;jj<=0;jj++){
-                printf("%c",buff[i-1+jj]);
-            }
+            // printf("->");
+            // for(int jj=-10;jj<=0;jj++){
+            //     printf("%c",buff[i-1+jj]);
+            // }
 		}
 	}
     chunk_q.push({chunk_index++,buff_size-1});  // the last chunk
@@ -230,13 +230,13 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                printf("\noutlen=%08x",outlen); /* outlen: length includes padding*/
+                // printf("\noutlen=%08x",outlen); /* outlen: length includes padding*/
                 union {
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
                 u.header = (uint32_t)outlen<<1;
-                printf("\nencode Header:%08x",u.header);
+                // printf("\nencode Header:%08x",u.header);
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 memcpy(&output_buf[*outlength],output_code,outlen);
@@ -244,7 +244,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 free(output_code);
             }
             else{
-                printf("\ndedup");
+                // printf("\ndedup");
                 union {
                     uint32_t header;
                     uint8_t arr[4];
