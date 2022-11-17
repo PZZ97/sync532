@@ -61,7 +61,7 @@ void SHA_HW( uint8_t* message,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  H
     char digest[HASH_SIZE+1];
     Sha sha;
     wc_InitSha(&sha);
-    wc_ShaUpdate(&sha, (const unsigned char*)message[chunk_start],chunk_end-chunk_start+1 ); 
+    wc_ShaUpdate(&sha, message+chunk_start,chunk_end-chunk_start+1 ); 
     wc_ShaFinal(&sha, (unsigned char*)digest);
     cout<<"digest=";
     for(int i=0;i<=HASH_SIZE;i++)
