@@ -13,8 +13,6 @@ using namespace std;
 #define MODULUS 256
 #define TARGET 0
 
-unordered_map<string, int> table;
-
 uint64_t hash_func(unsigned char* input, unsigned int pos)
 {
 //	unordered_map <int,int> uma2;
@@ -180,15 +178,22 @@ CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
 }
 
 void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*output_code,size_t * outlen){
+
+    unordered_map<string, int> table;
+    // build the original table 
+    for (int i = 0; i <= 255; i++) {
+        string ch = "";
+        ch += char(i);
+        table[ch] = i;
+    }
     string p = "", c = "";
     p += s1[chunk_start];
     unsigned int code = 256;
 
     *outlen=0;
     int appeartimes=0;
-    int bitsize=0;
     for (int i = chunk_start; i <=chunk_end; i++) {
-        if (i != chunk_end - 1)
+        if (i != chunk_end)
             c += s1[i + 1];
         if (table.find(p + c) != table.end()) {
             p = p + c;
@@ -288,12 +293,6 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
 /* &file[offset]->output_buf */
 
 uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
-    for (int i = 0; i <= 255; i++) {
-        string ch = "";
-        ch += char(i);
-        table[ch] = i;
-    }
-
 
     *outlength =0;  // initialize output length
     IDXQ q_chunk;   // q_chunk: queue saves each chunk by identifing each chunk end position and chunk ID
