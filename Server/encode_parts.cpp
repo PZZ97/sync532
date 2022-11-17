@@ -303,14 +303,14 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             // cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
             array<CHUNK_idx_t,2> index =q_chunk.front();
             CHUNK_idx_t chunk_unique_id = index[0];
-            chunk_end_pos= index[1];
+            chunk_end_pos= index[1]+1;
             q_chunk.pop();
 
             // cout<<"chunk id="<<chunk_unique_id<<"\tchunk size="<<chunk_end_pos-chunk_start_pos<<endl;
 
             HASH hash_value;
             char message[inlength];
-            for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
+            for(int i=chunk_start_pos;i<chunk_end_pos;i++){
                 message[i-chunk_start_pos]=input_buf[i];
             }
             char tmp[HASH_SIZE+1];
@@ -326,13 +326,9 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             if(sent ==-1 ){
                 
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
-                // cout<<"#generate LZW"<<endl;//, output code[0:5]="<<output_code[0]<<output_code[1]<<output_code[2]<<output_code[3]<<output_code[4]<<endl;
-            
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                // printf("Output len%d",outlen);
-                //send (output_code);
-                outlen--;
+                /* outlen: length includes padding*/
                 union {
                     uint32_t header;
                     uint8_t arr[4];
@@ -341,7 +337,6 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 // cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
-              
                 memcpy(&output_buf[*outlength],output_code,outlen);
                 *outlength+=outlen;
             }
