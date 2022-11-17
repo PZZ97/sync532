@@ -58,13 +58,13 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 void SHA_HW( uint8_t* message,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  HASH *digest_hash){
     // https://edstem.org/us/courses/27305/discussion/2053707
 
-    char digest[HASH_SIZE+1];
+    char digest[HASH_SIZE];
     Sha sha;
     wc_InitSha(&sha);
     wc_ShaUpdate(&sha, message+chunk_start,chunk_end-chunk_start+1 ); 
     wc_ShaFinal(&sha, (unsigned char*)digest);
     cout<<"digest=";
-    for(int i=0;i<=HASH_SIZE;i++)
+    for(int i=0;i<HASH_SIZE;i++)
         printf("%02x",digest[i]);
     cout<<endl;
     *digest_hash=digest;
