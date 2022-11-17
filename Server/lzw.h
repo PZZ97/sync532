@@ -3,7 +3,7 @@
 
 #include <string>
 #include <array>
-
+#include <queue>
 // LZW
 /*
     @ chunk_start： current chunk's start position
