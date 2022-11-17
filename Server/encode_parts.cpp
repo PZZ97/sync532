@@ -308,7 +308,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
             HASH hash_value;
             char message[inlength];
-            for(int i=chunk_start_pos;i<chunk_end_pos;i++){
+            for(int i=chunk_start_pos;i<=chunk_end_pos;i++){
                 message[i-chunk_start_pos]=input_buf[i];
             }
             char tmp[HASH_SIZE+1];
