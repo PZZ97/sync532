@@ -55,15 +55,15 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 
 // }
     // SHA_HW(input_buf,chunk_start_pos,chunk_end_pos, &hash_value);
-void SHA_HW( uint8_t* message_,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  HASH *digest_hash){
+void SHA_HW( uint8_t* message,CHUNK_pos_t  chunk_start,CHUNK_pos_t chunk_end,  HASH *digest_hash){
     // https://edstem.org/us/courses/27305/discussion/2053707
 
 
-    char shaSum[HASH_SIZE];
+    // char shaSum[HASH_SIZE];
     char digest[HASH_SIZE+1];
     Sha sha;
     wc_InitSha(&sha);
-    wc_ShaUpdate(&sha, (const unsigned char*)message[chunk_start_pos],chunk_end-chunk_start+1 ); 
+    wc_ShaUpdate(&sha, (const unsigned char*)message[chunk_start],chunk_end-chunk_start+1 ); 
     wc_ShaFinal(&sha, (unsigned char*)digest);
 
 
