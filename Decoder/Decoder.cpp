@@ -51,6 +51,7 @@ static const std::string Decompress(size_t Size)
     else
       Symbols = Code_table[New];
     Output += Symbols;
+    std::cout<<Symbols;
     Symbol = std::string(1, Symbols[0]);
     Code_table.push_back(Code_table[Old] + Symbol);
     Old = New;
@@ -96,12 +97,12 @@ int main(int Parameter_count, char * Parameters[])
     {
       int Chunk_size = Header >> 1;
       std::cout<<"LZWChunk_size="<<Chunk_size<<std::endl;
+      printf("Decompressed res:\n");
       const std::string & Chunk = Decompress(Chunk_size);
       Chunks.push_back(Chunk);
       std::cout << "Decompressed chunk of size " << Chunk.length() << ".\n";
       Output.write(&Chunk[0], Chunk.length());
-      printf("Decompressed res:\n");
-      std::cout<<Chunk<<std::endl;
+      // std::cout<<Chunk<<std::endl;
     }
     else
     {
