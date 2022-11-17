@@ -1,4 +1,4 @@
-#include "encode_parts.h"
+#include "lzw.cpp"
 #include <iostream>
 #include<string>
 #include <unordered_map>
