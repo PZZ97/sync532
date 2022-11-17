@@ -99,6 +99,8 @@ int main(int Parameter_count, char * Parameters[])
       Chunks.push_back(Chunk);
       std::cout << "Decompressed chunk of size " << Chunk.length() << ".\n";
       Output.write(&Chunk[0], Chunk.length());
+      printf("Decompressed res:\n");
+      std::cout<<Chunk<<std::endl;
     }
     else
     {
