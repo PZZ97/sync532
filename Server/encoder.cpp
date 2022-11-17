@@ -15,6 +15,7 @@
 #include "stopwatch.h"
 #include "encode_parts.h"
 #include <array>
+using namespace ::std;
 #define NUM_PACKETS 8
 #define pipe_depth 4
 #define DONE_BIT_L (1 << 7)
