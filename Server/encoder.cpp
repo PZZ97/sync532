@@ -1,5 +1,5 @@
 #include "encoder.h"
-// #include "lzw.h"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include "stopwatch.h"
-#include "lzw.h"
+#include "LZW.cpp"
 #include "encode_parts.h"
 #define NUM_PACKETS 8
 #define pipe_depth 4

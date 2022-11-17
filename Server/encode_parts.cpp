@@ -1,10 +1,12 @@
 #include "encode_parts.h"
-#include "lzw.h"
+// #include "lzw.h"
 #include <unordered_map>
 #include <iostream>
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/sha.h>
 #include <math.h>
+#include "LZW.cpp"
+
 using namespace std;
 
 #define HASH_SIZE SHA_DIGEST_SIZE
