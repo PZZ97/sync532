@@ -1,6 +1,6 @@
 // #include "encode_parts.h"
-// #include "lzw.h"
-#include <string>
+#include "lzw.h"
+
 #include <unordered_map>
 #include <iostream>
 #include <math.h>
