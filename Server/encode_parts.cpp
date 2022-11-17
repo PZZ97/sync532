@@ -196,7 +196,6 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
             p = p + c;
         }
         else {
-            printf("\ntable[p]=%d,",table[p]);
             if(appeartimes==0){
                 output_code[(*outlen)++] |=( table[p]  &0b1111111100000)>>5;
                 output_code[(*outlen)] |= (table[p]    &0b0000000011111)<<3;
@@ -280,11 +279,10 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
     }    
 
     while((*outlen)%8!=0){  // padding
-        cout<<"\npadding"<<endl;
+        // cout<<"\npadding"<<endl;
         output_code[(*outlen)++]=0;
     }
-
-
+    printf("\noutlen=%d",*outlen);
 }
 
 /* &file[offset]->output_buf */
