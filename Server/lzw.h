@@ -1,7 +1,7 @@
 #ifndef __LZW_H__
 #define __LZW_H__
 
-
+#include "lzw.h"
 #include <string>
 #include <array>
 
