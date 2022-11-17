@@ -18,7 +18,7 @@
 #define pipe_depth 4
 #define DONE_BIT_L (1 << 7)
 #define DONE_BIT_H (1 << 15)
-
+using namespace::std;
 int offset = 0;
 unsigned char* file;
 
