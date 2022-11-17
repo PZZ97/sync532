@@ -1,5 +1,6 @@
+#include "lzw.h"
+
 #include "encode_parts.h"
-// #include "lzw.h"
 #include <unordered_map>
 #include <iostream>
 #include <wolfssl/options.h>
