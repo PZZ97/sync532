@@ -14,7 +14,7 @@ void LZW_HW(int chunk_start,int chunk_end,string &s1,unsigned char*output_code,s
 }
 void LZW_SW(int chunk_start,int chunk_end,string &s1,unsigned char*output_code,size_t * outlen){
     
-    memset(output_code,0,(chunk_end-chunk_start+1)*2);
+//    memset(output_code,0,(chunk_end-chunk_start+1)*2);
     unordered_map<string, int> table;
     // build the original table 
     for (int i = 0; i <= 255; i++) {
@@ -134,8 +134,11 @@ bool compare(unsigned char* code1,unsigned char*code2,size_t length){
 
     unsigned char* code1=(unsigned char*)malloc(sizeof(unsigned char)*INPUT_SIZE*2);
     unsigned char* code2=(unsigned char*)malloc(sizeof(unsigned char)*INPUT_SIZE*2);
-    memset(code1,0,(INPUT_SIZE)*2);
-    memset(code2,0,(INPUT_SIZE)*2);
+    for(int i=0;i<INPUT_SIZE*2;i++){
+    	code1[i]=0;code2[i]=0;
+    }
+//    memset(code1,0,(INPUT_SIZE)*2);
+//    memset(code2,0,(INPUT_SIZE)*2);
     size_t len1,len2;
     LZW_HW(0,INPUT_SIZE-1,input,code1,&len1);
     LZW_SW(0,INPUT_SIZE-1,input,code2,&len2);
