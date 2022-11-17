@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="com.autoesl.autopilot.project" top="LZW">
   <files>
-    <file name="../Server/encode_parts.cpp" sc="0" tb="false" cflags="" blackbox="false"/>
     <file name="../../../Server/testbench.cpp" sc="0" tb="1" cflags=""/>
   </files>
   <solutions>

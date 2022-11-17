@@ -1,14 +1,11 @@
 INFO: [SIM 2] *************** CSIM start ***************
 INFO: [SIM 4] CSIM will launch GCC as the compiler.
    Compiling ../../../../../Server/testbench.cpp in debug mode
-../../../../../Server/testbench.cpp: In function ‘void LZW_SW(int, int, std::__cxx11::string&, unsigned char*, size_t*)’:
-../../../../../Server/testbench.cpp:17:53: error: ‘memset’ was not declared in this scope
-     memset(output_code,0,(chunk_end-chunk_start+1)*2);
-                                                     ^
-../../../../../Server/testbench.cpp: In function ‘int main()’:
-../../../../../Server/testbench.cpp:137:34: error: ‘memset’ was not declared in this scope
-     memset(code1,0,(INPUT_SIZE)*2);
-                                  ^
-make: *** [csim.mk:72: obj/testbench.o] Error 1
+   Compiling ../../../../../Server/encode_parts.cpp in debug mode
+../../../../../Server/encode_parts.cpp:4:29: fatal error: wolfssl/options.h: No such file or directory
+ #include <wolfssl/options.h>
+                             ^
+compilation terminated.
+make: *** [csim.mk:78: obj/encode_parts.o] Error 1
 ERR: [SIM 100] 'csim_design' failed: compilation error(s).
 INFO: [SIM 3] *************** CSIM finish ***************

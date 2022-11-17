@@ -1,6 +1,6 @@
 INFO: Applying HLS Y2K22 patch v1.2 for IP revision
 INFO: [HLS 200-10] Running '/mnt/pollux/software/xilinx/2020.2/Vitis_HLS/2020.2/bin/unwrapped/lnx64.o/vitis_hls'
-INFO: [HLS 200-10] For user 'jpzhao' on host 'kinfolk.seas.upenn.edu' (Linux_x86_64 version 5.14.21-150400.24.28-default) on Thu Nov 17 13:39:52 EST 2022
+INFO: [HLS 200-10] For user 'jpzhao' on host 'kinfolk.seas.upenn.edu' (Linux_x86_64 version 5.14.21-150400.24.28-default) on Thu Nov 17 13:54:04 EST 2022
 INFO: [HLS 200-10] On os "openSUSE Leap 15.4"
 INFO: [HLS 200-10] In directory '/mnt/castor/seas_home/j/jpzhao/532/sync3/sync532/vitis_ppp'
 Sourcing Tcl script '/mnt/castor/seas_home/j/jpzhao/532/sync3/sync532/vitis_ppp/project_lzw/solution1/csim.tcl'
@@ -24,18 +24,15 @@ INFO: [HLS 200-1510] Running: csim_design -quiet
 INFO: [SIM 211-2] *************** CSIM start ***************
 INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
    Compiling ../../../../../Server/testbench.cpp in debug mode
-../../../../../Server/testbench.cpp: In function ‘void LZW_SW(int, int, std::__cxx11::string&, unsigned char*, size_t*)’:
-../../../../../Server/testbench.cpp:17:53: error: ‘memset’ was not declared in this scope
-     memset(output_code,0,(chunk_end-chunk_start+1)*2);
-                                                     ^
-../../../../../Server/testbench.cpp: In function ‘int main()’:
-../../../../../Server/testbench.cpp:137:34: error: ‘memset’ was not declared in this scope
-     memset(code1,0,(INPUT_SIZE)*2);
-                                  ^
-make: *** [csim.mk:72: obj/testbench.o] Error 1
+   Compiling ../../../../../Server/encode_parts.cpp in debug mode
+../../../../../Server/encode_parts.cpp:4:29: fatal error: wolfssl/options.h: No such file or directory
+ #include <wolfssl/options.h>
+                             ^
+compilation terminated.
+make: *** [csim.mk:78: obj/encode_parts.o] Error 1
 ERROR: [SIM 211-100] 'csim_design' failed: compilation error(s).
 INFO: [SIM 211-3] *************** CSIM finish ***************
-INFO: [HLS 200-111] Finished Command csim_design CPU user time: 0.36 seconds. CPU system time: 0.16 seconds. Elapsed time: 0.76 seconds; current allocated memory: 207.807 MB.
+INFO: [HLS 200-111] Finished Command csim_design CPU user time: 0.52 seconds. CPU system time: 0.25 seconds. Elapsed time: 1.1 seconds; current allocated memory: 207.808 MB.
 4
     while executing
 "source /mnt/castor/seas_home/j/jpzhao/532/sync3/sync532/vitis_ppp/project_lzw/solution1/csim.tcl"
