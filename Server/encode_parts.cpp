@@ -178,7 +178,7 @@ CHUNK_idx_t deduplication(CHUNK_idx_t chunk_index,HASH& hash_value){
 }
 
 void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*output_code,size_t * outlen){
-
+    memset(output_code,0,(chunk_end-chunk_start+1)*2);
     unordered_map<string, int> table;
     // build the original table 
     for (int i = 0; i <= 255; i++) {
@@ -317,19 +317,13 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
             strcpy(tmp,hash_value.c_str());
             SHA_HW(message,tmp);
             hash_value=tmp;
-            // for(int i=0;i<HASH_SIZE;i++)
-            //     printf("%x",hash_value[i]);
-            // printf("\n") ;  
-
-            // return value of deduplication is unique chunk index if find index, else -1
+        
             CHUNK_idx_t sent =deduplication(chunk_unique_id,hash_value);
             if(sent ==-1 ){
-                
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
-                printf("\noutlen=%08x",outlen);
-                /* outlen: length includes padding*/
+                printf("\noutlen=%08x",outlen); /* outlen: length includes padding*/
                 union {
                     uint32_t header;
                     uint8_t arr[4];
@@ -338,7 +332,6 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 printf("\nencode Header:%08x",u.header);
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
-                // cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
                 memcpy(&output_buf[*outlength],output_code,outlen);
                 (*outlength)+=outlen;
                 free(output_code);
@@ -351,13 +344,8 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 }u;
                 u.header = sent<<1;
                 u.header|=1;
-                // u.header=0x80000000|sent;
-                // cout <<"\t#repeat chunk, chunk id="<< (u.header>>1) <<"\t"<< endl;
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
-                //send(sent);
-                // output_buf[(*outlength)++]=(unsigned char)sent;
-                // memcpy(&output_buf[*outlength],output_code,outlen);
             }
         }
     return 0;
