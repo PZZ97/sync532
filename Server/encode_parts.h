@@ -7,7 +7,6 @@
 #include <string>
 #include <array>
 #include <vector>
-#include "lzw.h"
 // #include <wolfssl/wolfcrypt/sha.h>
 typedef int CHUNK_idx_t;  // index of unique chunk
 typedef int CHUNK_pos_t;  // index of chunk end pos in packet buffer
