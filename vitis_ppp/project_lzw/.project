@@ -47,6 +47,11 @@
 			<location>/mnt/castor/seas_home/j/jpzhao/532/sync3/sync532/Server/encode_parts.cpp</location>
 		</link>
 		<link>
+			<name>testbench/testbench.cpp</name>
+			<type>1</type>
+			<location>/mnt/castor/seas_home/j/jpzhao/532/sync3/sync532/Server/testbench.cpp</location>
+		</link>
+		<link>
 			<name>solution1/constraints/.xml.directive</name>
 			<type>1</type>
 			<location>/mnt/castor/seas_home/j/jpzhao/532/sync3/sync532/vitis_ppp/project_lzw/solution1/solution1.directive</location>

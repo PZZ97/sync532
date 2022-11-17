@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+	<Message severity="INFO" prefix="[HLS 200-111]" key="HLS_111_966" tag="RUNTIME" content="Finished File checks and directory preparation: CPU user time: 0 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 207.750 MB." resolution=""/>
+	<Message severity="INFO" prefix="[HLS 200-10]" key="HLS_10_1312" tag="" content="Analyzing design file &apos;../Server/encode_parts.cpp&apos; ..." resolution=""/>
+	<Message severity="ERROR" prefix="[HLS 207-812]" key="HLS 207-812" tag="" content="&apos;wolfssl/options.h&apos; file not found: ../Server/encode_parts.cpp:4:10" resolution=""/>
+	<Message severity="INFO" prefix="[HLS 200-111]" key="HLS_111_966" tag="RUNTIME" content="Finished Command csynth_design CPU user time: 0.16 seconds. CPU system time: 0.08 seconds. Elapsed time: 0.69 seconds; current allocated memory: 208.107 MB." resolution=""/>
+</Messages>

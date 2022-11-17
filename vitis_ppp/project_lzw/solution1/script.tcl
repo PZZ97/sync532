@@ -6,11 +6,12 @@
 open_project project_lzw
 set_top LZW
 add_files ../Server/encode_parts.cpp
+add_files -tb ../Server/testbench.cpp
 open_solution "solution1" -flow_target vivado
 set_part {xczu3eg-sbva484-1-i}
 create_clock -period 150MHz -name default
 #source "./project_lzw/solution1/directives.tcl"
-#csim_design
+csim_design
 csynth_design
-#cosim_design
+cosim_design
 export_design -rtl verilog -format ip_catalog
