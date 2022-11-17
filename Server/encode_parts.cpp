@@ -334,7 +334,6 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
-                outlen++;
                 u.header = (uint32_t)outlen<<1;
                 printf("\nencode Header:%08x",u.header);
                 memcpy(&output_buf[*outlength],u.arr,4);
