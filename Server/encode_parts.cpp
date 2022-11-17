@@ -282,7 +282,6 @@ void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*
         // cout<<"\npadding"<<endl;
         output_code[(*outlen)++]=0;
     }
-    printf("\noutlen=%d",*outlen);
 }
 
 /* &file[offset]->output_buf */
@@ -326,12 +325,14 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 unsigned char* output_code = (unsigned char*) malloc(sizeof(unsigned char)*((chunk_end_pos-chunk_start_pos+1)*2));
                 size_t outlen;
                 LZW(chunk_start_pos,chunk_end_pos,s_packet,inlength,output_code,&outlen);
+                printf("\noutlen=%d",outlen);
                 /* outlen: length includes padding*/
                 union {
                     uint32_t header;
                     uint8_t arr[4];
                 }u;
                 u.header = (uint32_t)outlen<<1;
+                printf("\nencode Header:%08x",u.header);
                 memcpy(&output_buf[*outlength],u.arr,4);
                 (*outlength)+=4;
                 // cout <<"LZWheader ="<< u.header <<"\t"<<"arr[0]="<<u.arr[0]<<"\tarr[3]="<<u.arr[3]<< endl;
@@ -339,6 +340,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
                 (*outlength)+=outlen;
             }
             else{
+                printf("\ndedup");
                 union {
                     uint32_t header;
                     uint8_t arr[4];

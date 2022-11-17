@@ -88,6 +88,7 @@ int main(int Parameter_count, char * Parameters[])
     
     uint32_t Header;
     Input.read((char *) &Header, sizeof(int32_t));
+    printf("\ndecode Header:%08x",Header);
     if (Input.eof())
       break;
 
