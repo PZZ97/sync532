@@ -134,7 +134,7 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int 
     std::string s_packet(reinterpret_cast<char*>(input_buf));  // convert input(unsigned char) to string saving in  $s_packet$
     CHUNK_pos_t chunk_start_pos= 0;
     CHUNK_pos_t chunk_end_pos=-1;
-    while(q_index[i]!=-1){    // pop out each chunk and manipulate each chunk in order 
+    while(q_index[index]!=-1){    // pop out each chunk and manipulate each chunk in order 
             chunk_start_pos=chunk_end_pos+1;
             // cout<<"chunk_start_pos="<<chunk_start_pos<<endl;
 			chunk_end_pos=q_index[index];
