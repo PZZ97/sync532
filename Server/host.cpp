@@ -84,8 +84,8 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int 
     for(int i=0;i<inlength;i++){
         q_index[i]=0;
     }
-    input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, inlength);
-    q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, inlength);
+    input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, inlength*sizeof(unsigned char));
+    q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, inlength*sizeof(int ));
 
     // ------------------------------------------------------------------------------------
     // Step 3: Run the kernel
