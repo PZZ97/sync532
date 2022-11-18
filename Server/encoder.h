@@ -6,7 +6,7 @@
 #define HEADER 2
 #include<string>
 #include<array>
-
+#include<queue>
 // std::queue<std::array<int, 2>> IDXQ
 void cdc(unsigned char* buff, unsigned int buff_size, std::queue<std::array<int, 2>>& chunk_index);
 
