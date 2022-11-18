@@ -5,9 +5,9 @@
 #include <math.h>
 
 using namespace std;
-class fakestring(){
-    
-}
+// class fakestring(){
+
+// }
 void LZW(int chunk_start,int chunk_end,string &s1,int packet_size,unsigned char*output_code,size_t * outlen){
     // memset(output_code,0,(chunk_end-chunk_start+1)*2);
     for(int i=0;i<(chunk_end-chunk_start+1)*2;i++)
