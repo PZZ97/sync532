@@ -35,7 +35,7 @@ using namespace ::std;
 
 int offset = 0;
 unsigned char* file;
-uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
+uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
     *outlength =0;  // initialize output length
 	int q_index[inlength]={-1};	// -1 indicates unwrite value
 	unsigned int index=0;
@@ -46,7 +46,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     // Step 1: Initialize the OpenCL environment
      // ------------------------------------------------------------------------------------
     cl_int err;
-    std::string binaryFile = argv[1];
+    // std::string binaryFile = argv[1];
     unsigned fileBufSize;
     std::vector<cl::Device> devices = get_xilinx_devices();
     devices.resize(1);
@@ -65,7 +65,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
     cl::Buffer a_buf;
     // cl::Buffer b_buf[NUM_MAT];
-    cl::Buffer b_buf;
+    cl::Buffer c_buf;
 
     a_buf = cl::Buffer(context, CL_MEM_READ_ONLY, inlength, NULL, &err);
 
@@ -82,8 +82,8 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     for(int i=0;i<inlength;i++){
         q_index[i]=0;
     }
-    input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, bytes_per_iteration);
-    q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, bytes_per_iteration);
+    input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, inlength);
+    q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, inlength);
 
     // ------------------------------------------------------------------------------------
     // Step 3: Run the kernel
@@ -100,7 +100,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
 
     // if(i == 0)
     // {
-        q.enqueueMigrateMemObjects({a_buf[i%NUM_MAT], b_buf[i%NUM_MAT]}, 0 /* 0 means from host*/, NULL, &write_ev);
+        q.enqueueMigrateMemObjects({a_buf, b_buf}, 0 /* 0 means from host*/, NULL, &write_ev);
     // }
     // else
     // {
@@ -112,7 +112,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     write_events.push_back(write_ev);
     q.enqueueTask(krnl_cdc, &write_events, &exec_ev);
     exec_events.push_back(exec_ev);
-    q.enqueueMigrateMemObjects({c_buf[i%NUM_MAT]}, CL_MIGRATE_MEM_OBJECT_HOST, &exec_events, &read_ev);
+    q.enqueueMigrateMemObjects({c_buf}, CL_MIGRATE_MEM_OBJECT_HOST, &exec_events, &read_ev);
     read_events.push_back(read_ev);
 
     q.finish();
@@ -121,7 +121,7 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
     // Step 4: Release Allocated Resources
     // ------------------------------------------------------------------------------------
 
-    std::cout << "--------------- Total time ---------------"
+    std::cout << "--------------- Total time ---------------"<<endl;
 
     ///////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////
@@ -241,7 +241,7 @@ int main(int argc, char* argv[]) {
 	// top function here.
 	// memcpy(&file[offset], &buffer[HEADER], length);
 	int output_length=0;	
-	encode(&file[offset],&buffer[HEADER],length,&output_length);
+	encode(argv[1],&file[offset],&buffer[HEADER],length,&output_length);
 	offset += output_length;
 	writer++;
 
@@ -266,7 +266,7 @@ int main(int argc, char* argv[]) {
 		length &= ~DONE_BIT_H;
 		//printf("length: %d offset %d\n",length,offset);
 		// memcpy(&file[offset], &buffer[HEADER], length);
-		encode(&file[offset],&buffer[HEADER],length,&output_length);
+		encode(argv[1],&file[offset],&buffer[HEADER],length,&output_length);
 		offset += output_length;
 		writer++;
 	}
