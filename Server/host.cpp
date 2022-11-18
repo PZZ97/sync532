@@ -1,3 +1,15 @@
+#define CL_HPP_CL_1_2_DEFAULT_BUILD
+#define CL_HPP_TARGET_OPENCL_VERSION 120
+#define CL_HPP_MINIMUM_OPENCL_VERSION 120
+#define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+
+#include <CL/cl2.hpp>
+#include <cstdint>
+#include <cstdlib>
+#include <fstream>
+#include <vector>
+#include "Utilities.h"
 #include "encoder.h"
 
 #include <stdio.h>
@@ -23,13 +35,100 @@ using namespace ::std;
 
 int offset = 0;
 unsigned char* file;
-
 uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
-
     *outlength =0;  // initialize output length
 	int q_index[inlength]={-1};	// -1 indicates unwrite value
 	unsigned int index=0;
-    cdc(input_buf,inlength,q_index); 
+
+    ////////////////////////////////////////
+   std::cout<<"start encode"<<endl;
+    // ------------------------------------------------------------------------------------
+    // Step 1: Initialize the OpenCL environment
+     // ------------------------------------------------------------------------------------
+    cl_int err;
+    std::string binaryFile = argv[1];
+    unsigned fileBufSize;
+    std::vector<cl::Device> devices = get_xilinx_devices();
+    devices.resize(1);
+    cl::Device device = devices[0];
+    cl::Context context(device, NULL, NULL, NULL, &err);
+    char *fileBuf = read_binary_file(binaryFile, fileBufSize);
+    cl::Program::Binaries bins{{fileBuf, fileBufSize}};
+    cl::Program program(context, devices, bins, NULL, &err);
+    cl::CommandQueue q(context, device, CL_QUEUE_PROFILING_ENABLE, &err);
+    cl::Kernel krnl_cdc(program, "cdc", &err);
+    // ------------------------------------------------------------------------------------
+    // Step 2: Create buffers and initialize test values
+    // ------------------------------------------------------------------------------------
+
+// void cdc(unsigned char* buff, unsigned int buff_size, int * chunk_q){
+
+    cl::Buffer a_buf;
+    // cl::Buffer b_buf[NUM_MAT];
+    cl::Buffer b_buf;
+
+    a_buf = cl::Buffer(context, CL_MEM_READ_ONLY, inlength, NULL, &err);
+
+    c_buf = cl::Buffer(context, CL_MEM_WRITE_ONLY, inlength, NULL, &err);
+    
+
+    // float *a[NUM_MAT];
+
+    // float *b[NUM_MAT];
+    // float *c[NUM_MAT];
+    // unsigned char* buf 
+    // int* q_index;
+    // 
+    for(int i=0;i<inlength;i++){
+        q_index[i]=0;
+    }
+    input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, bytes_per_iteration);
+    q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, bytes_per_iteration);
+
+    // ------------------------------------------------------------------------------------
+    // Step 3: Run the kernel
+    // ------------------------------------------------------------------------------------
+
+    std::vector<cl::Event> write_events;
+
+    std::vector<cl::Event> exec_events, read_events;
+    cl::Event write_ev, exec_ev, read_ev;
+
+    krnl_cdc.setArg(0, a_buf);
+    krnl_cdc.setArg(1, inlength);
+    krnl_cdc.setArg(2, c_buf);
+
+    // if(i == 0)
+    // {
+        q.enqueueMigrateMemObjects({a_buf[i%NUM_MAT], b_buf[i%NUM_MAT]}, 0 /* 0 means from host*/, NULL, &write_ev);
+    // }
+    // else
+    // {
+    //     q.enqueueMigrateMemObjects({a_buf[i%NUM_MAT], b_buf[i%NUM_MAT]}, 0 /* 0 means from host*/, &write_events,
+    //     &write_ev);
+    //     write_events.pop_back();
+    // }
+
+    write_events.push_back(write_ev);
+    q.enqueueTask(krnl_cdc, &write_events, &exec_ev);
+    exec_events.push_back(exec_ev);
+    q.enqueueMigrateMemObjects({c_buf[i%NUM_MAT]}, CL_MIGRATE_MEM_OBJECT_HOST, &exec_events, &read_ev);
+    read_events.push_back(read_ev);
+
+    q.finish();
+
+    // ------------------------------------------------------------------------------------
+    // Step 4: Release Allocated Resources
+    // ------------------------------------------------------------------------------------
+
+    std::cout << "--------------- Total time ---------------"
+
+    ///////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+
+
+    // cdc(input_buf,inlength,q_index); 
+    
     std::string s_packet(reinterpret_cast<char*>(input_buf));  // convert input(unsigned char) to string saving in  $s_packet$
     CHUNK_pos_t chunk_start_pos= 0;
     CHUNK_pos_t chunk_end_pos=-1;
@@ -72,6 +171,8 @@ uint8_t encode(uint8_t * output_buf, uint8_t* input_buf, int inlength, int * out
         }
     return 0;
 }
+
+
 void handle_input(int argc, char* argv[], int* blocksize) {
 	int x;
 	extern char *optarg;
@@ -88,6 +189,8 @@ void handle_input(int argc, char* argv[], int* blocksize) {
 		}
 	}
 }
+
+
 
 int main(int argc, char* argv[]) {
 	stopwatch ethernet_timer;
