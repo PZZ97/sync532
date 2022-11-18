@@ -1,14 +1,16 @@
 #include "encoder.h"
+#include <math.h>
 
 #define PRIME 3
 #define WIN_SIZE 16
 #define MODULUS 256
 #define TARGET 0
+using namespace std;
 typedef int CHUNK_idx_t;  // index of unique chunk
 typedef int CHUNK_pos_t;  // index of chunk end pos in packet buffer
-typedef std::queue<std::array<int, 2>> IDXQ; 
+// typedef queue<array<int, 2>> IDXQ; 
 
-void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
+void cdc(unsigned char* buff, unsigned int buff_size, queue<array<int, 2>>& chunk_q)
 {
     CHUNK_idx_t chunk_index=0; 
 	uint64_t hash = 0;
