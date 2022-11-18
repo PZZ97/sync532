@@ -37,9 +37,9 @@ int offset = 0;
 unsigned char* file;
 uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int inlength, int * outlength ){
     *outlength =0;  // initialize output length
-	int q_index[inlength]={-1};	// -1 indicates unwrite value
+	int q_index[inlength-1]={-1};	// -1 indicates unwrite value
 	unsigned int index=0;
-    unsigned char input_buf[inlength];
+    unsigned char input_buf[inlength+1];
     for(int i=0;i<inlength;i++)
         input_buf[i]=input_buf2[i];
     ////////////////////////////////////////
@@ -68,8 +68,8 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int 
     cl::Buffer a_buf;
     // cl::Buffer b_buf[NUM_MAT];
     cl::Buffer c_buf;
-    size_t len_char=sizeof(unsigned char);
-    size_t len_int=sizeof(int);
+    size_t len_char=inlength*sizeof(unsigned char);
+    size_t len_int=inlength*sizeof(int);
     a_buf = cl::Buffer(context, CL_MEM_READ_ONLY, len_char, NULL, &err);
 
     c_buf = cl::Buffer(context, CL_MEM_WRITE_ONLY,len_int, NULL, &err);
