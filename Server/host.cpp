@@ -84,7 +84,7 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf, int i
     // int* q_index;
     // 
     for(int i=0;i<inlength;i++){
-        q_index[i]=0;
+        q_index[i]=-1;
     }
     input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, len_char);
     q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, len_int);
