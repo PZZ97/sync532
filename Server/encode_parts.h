@@ -17,8 +17,8 @@ typedef std::queue<std::array<int, 2>> IDXQ;    // {CHUNK_idx_t,CHUNK_pos_t}
 //typedef std::array<unsigned char,HASH_SIZE> HASH;
 typedef std::string HASH;
 //function call inside CDC
-uint64_t hash_func(unsigned char* input, unsigned int pos);
-uint64_t hash_func2(unsigned char* input, unsigned int pos, uint64_t hash_res);
+// uint64_t hash_func(unsigned char* input, unsigned int pos);
+// uint64_t hash_func2(unsigned char* input, unsigned int pos, uint64_t hash_res);
 
 // CDC
 /*
