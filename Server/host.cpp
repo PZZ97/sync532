@@ -69,9 +69,9 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int 
     // cl::Buffer b_buf[NUM_MAT];
     cl::Buffer c_buf;
 
-    a_buf = cl::Buffer(context, CL_MEM_READ_ONLY, inlength, NULL, &err);
+    a_buf = cl::Buffer(context, CL_MEM_READ_ONLY, inlength*sizeof(unsigned char), NULL, &err);
 
-    c_buf = cl::Buffer(context, CL_MEM_WRITE_ONLY, inlength, NULL, &err);
+    c_buf = cl::Buffer(context, CL_MEM_WRITE_ONLY, inlength*sizeof(int), NULL, &err);
     
 
     // float *a[NUM_MAT];
