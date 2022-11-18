@@ -39,7 +39,7 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int 
     *outlength =0;  // initialize output length
 	int q_index[inlength]={-1};	// -1 indicates unwrite value
 	unsigned int index=0;
-    uint8_t input_buf[inlength];
+    unsigned char input_buf[inlength];
     for(int i=0;i<inlength;i++)
         input_buf[i]=input_buf2[i];
     ////////////////////////////////////////
