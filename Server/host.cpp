@@ -69,9 +69,9 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int 
     // cl::Buffer b_buf[NUM_MAT];
     cl::Buffer c_buf;
 
-    a_buf = cl::Buffer(context, CL_MEM_READ_ONLY, inlength*sizeof(unsigned char), NULL, &err);
+    a_buf = cl::Buffer(context, CL_MEM_READ_ONLY, (inlength*sizeof(unsigned char)), NULL, &err);
 
-    c_buf = cl::Buffer(context, CL_MEM_WRITE_ONLY, inlength*sizeof(int), NULL, &err);
+    c_buf = cl::Buffer(context, CL_MEM_WRITE_ONLY,( inlength*sizeof(int)), NULL, &err);
     
 
     // float *a[NUM_MAT];
@@ -84,8 +84,8 @@ uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int 
     for(int i=0;i<inlength;i++){
         q_index[i]=0;
     }
-    input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, inlength*sizeof(unsigned char));
-    q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, inlength*sizeof(int ));
+    input_buf = (unsigned char*)q.enqueueMapBuffer(a_buf, CL_TRUE, CL_MAP_WRITE, 0, (inlength*sizeof(unsigned char)));
+    q_index = (int*)q.enqueueMapBuffer(c_buf, CL_TRUE, CL_MAP_READ, 0, (inlength*(sizeof(int))));
 
     // ------------------------------------------------------------------------------------
     // Step 3: Run the kernel
