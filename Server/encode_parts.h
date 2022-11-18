@@ -26,8 +26,7 @@ uint64_t hash_func2(unsigned char* input, unsigned int pos, uint64_t hash_res);
     @ buff_size: buff size
     @ chunk_index: queue used to store pair of <chunk end position in the buff, unique chunk number>
 */
-// void cdc(unsigned char* buff, unsigned int buff_size, queue<int>& chunk_index);
-void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_index);
+// void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_index);
 
 
 

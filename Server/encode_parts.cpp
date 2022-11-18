@@ -31,10 +31,14 @@ void cdc(unsigned char* buff, unsigned int buff_size, IDXQ& chunk_q)
 	uint64_t hash = 0;
 	for (unsigned int i = WIN_SIZE; i < buff_size - WIN_SIZE; i++) {
 		if (i == WIN_SIZE) {
-			hash = hash_func(buff, i);
+	        for (int j = 0; j < WIN_SIZE; j++) {
+		        hash += int(buff[i + WIN_SIZE - 1 - j]) * pow(PRIME, j + 1);
+	        }
+			//hash = hash_func(buff, i);
 		}
 		else {
-			hash = hash_func2(buff, i, hash);
+            hash = hash * PRIME - int(buff[i-1]) * pow(PRIME, WIN_SIZE + 1) + int(buff[i-1 + WIN_SIZE]) * PRIME;
+			//hash = hash_func2(buff, i, hash);
 		}
 		if ((hash % MODULUS) == TARGET) {
 			chunk_q.push({chunk_index++,i-1});
