@@ -35,13 +35,14 @@ using namespace ::std;
 
 int offset = 0;
 unsigned char* file;
-uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf2, int inlength, int * outlength ){
+uint8_t encode(string binaryFile,uint8_t * output_buf, uint8_t* input_buf, int inlength, int * outlength ){
     *outlength =0;  // initialize output length
-	int q_index[inlength-1]={-1};	// -1 indicates unwrite value
+	// int q_index[inlength-1]={-1};	// -1 indicates unwrite value
+    int* q_index=(int*)malloc(sizeof(int)*inlength);
 	unsigned int index=0;
     unsigned char input_buf[inlength+1];
-    for(int i=0;i<inlength;i++)
-        input_buf[i]=input_buf2[i];
+    // for(int i=0;i<inlength;i++)
+    //     input_buf[i]=input_buf2[i];
     ////////////////////////////////////////
    std::cout<<"start encode"<<endl;
     // ------------------------------------------------------------------------------------
